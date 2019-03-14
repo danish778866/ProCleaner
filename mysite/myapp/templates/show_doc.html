@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="item col-sm-12">         
+      <form action="{% url 'clean_file' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+        <table class="table table-dark table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Pair Candidate One</th>
+              <th scope="col">Pair Candidate Two</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pair in similar_pairs %}
+            <tr>
+              <td><input style="display:inline;" type="checkbox" name="clean" value="{{ pair.0|add:","|add:pair.1 }}" />{{ pair.0 }}</td>
+              <td><input style="display:inline;" type="checkbox" name="clean" value="{{ pair.1|add:","|add:pair.0 }}" />{{ pair.1 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p><input type="submit" value="Clean Up" /></p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+$(function() {
+
+    /* Get all rows from your 'table' but not the first one 
+     * that includes headers. */
+    var cells = $('td');
+
+    /* Create 'click' event handler for rows */
+    cells.on('click', function(e) {
+
+        /* Get current row */
+        var cell = $(this);
+        console.log(cell.find("input"))
+        var ckbox = cell.first();
+        console.log(ckbox)
+
+        /* Check if 'Ctrl', 'cmd' or 'Shift' keyboard key was pressed
+         * 'Ctrl' => is represented by 'e.ctrlKey' or 'e.metaKey'
+         * 'Shift' => is represented by 'e.shiftKey' */
+        if ((e.ctrlKey || e.metaKey) || e.shiftKey) {
+            /* If pressed highlight the other row that was clicked */
+            cell.addClass('highlight');
+        } else {
+            /* Otherwise just highlight one row and clean others */
+            cells.removeClass('highlight');
+            cell.addClass('highlight');
+        }
+
+    });
+
+    /* This 'event' is used just to avoid that the table text 
+     * gets selected (just for styling). 
+     * For example, when pressing 'Shift' keyboard key and clicking 
+     * (without this 'event') the text of the 'table' will be selected.
+     * You can remove it if you want, I just tested this in 
+     * Chrome v30.0.1599.69 */
+    $(document).bind('selectstart dragstart', function(e) { 
+        e.preventDefault(); return false; 
+    });
+
+});
+{% endblock %}
