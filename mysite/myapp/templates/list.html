@@ -4,24 +4,27 @@
 <div class="container">
     <div class="row">
          <div class="item col-sm-12">
-            <!--{% if documents %}
+            <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+            {% if all_documents %}
                 <ul>
-                {% for document in documents %}
-                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+                {% for document in all_documents %}
+                    <li>
+                      <a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a>
+                      <input style="display:inline;" type="checkbox" name="process_file" value="{{ document.docfile.url }}" />
+                    </li>
                 {% endfor %}
                 </ul>
             {% else %}
                 <p>No documents.</p>
-                {% endif %}-->
-            <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+                {% endif %}
                 <p>{{ form.non_field_errors }}</p>
                 <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
                 <p>
                     {{ form.docfile.errors }}
                     {{ form.docfile }}
                 </p>
-                <p><input type="submit" value="Upload" /></p>
+                <p><input type="submit" value="Submit" /></p>
             </form>
     </div>
     </div>

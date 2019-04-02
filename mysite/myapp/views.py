@@ -16,40 +16,51 @@ def list(request):
     # Handle file upload
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
+        process_file = request.POST.getlist('process_file')
         if form.is_valid():
-            newdoc = Document(docfile=request.FILES['docfile'])
-            newdoc.save()
+            filepath = request.FILES.get('filepath', False)
+            if filepath:
+                newdoc = Document(docfile=request.FILES['docfile'])
+                newdoc.save()
 
-            # Redirect to the document list after POST
-            request.session['uploaded_file_path'] = newdoc.docfile.url
+                # Redirect to the document list after POST
+                request.session['uploaded_file_path'] = newdoc.docfile.url
+            else:
+                request.session['uploaded_file_path'] = process_file[0]
+
             return HttpResponseRedirect(reverse('profiler_choice'))
     else:
         form = DocumentForm()  # A empty, unbound form
 
     # Load documents for the list page
-    documents = Document.objects.all()
+    all_documents = Document.objects.all()
 
     # Render list page with the documents and the form
     return render(
         request,
         'list.html',
-        {'documents': documents, 'form': form}
+        {'form': form, 'all_documents': all_documents}
     )
 
 def profiler_choice(request):
     form = ProfilerChoiceForm()
-    return render(request, 'profiler_choice.html', {'form': form})
+    uploaded_file_name = request.session.get('uploaded_file_path')
+    return render(request, 'profiler_choice.html', {'form': form, 'ret': uploaded_file_name})
 
 def clean_file(request):
     ret_val = ""
     checks = request.POST.getlist('clean')
     substitute = {}
+    uploaded_file_name = request.session.get('uploaded_file_path')
+    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
+    rules_file = open(rules_file_path, "w")
     for substitution in checks:
         words = substitution.split(",")
         ret_val = ret_val + words[1] + " "
         substitute[words[1]] = words[0]
-    uploaded_file_name = request.session.get('uploaded_file_path')
-    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        rules_file.write(words[1] + "->" + words[0] + "\n")
+    rules_file.close()
     uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
     uploaded_file = open(uploaded_file_path, "r")
@@ -65,7 +76,8 @@ def clean_file(request):
         line = uploaded_file.readline()
     uploaded_file.close()
     clean_file.close()
-    return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + ".clean"})
+    return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
+                                               ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
 
 def show_doc(request):
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

@@ -5,7 +5,8 @@ PROFILER_CHOICES = (('1', 'Find Similarity'), ('2', 'Profile'))
 class DocumentForm(forms.Form):
     docfile = forms.FileField(
         label = 'Select a File',
-        help_text = 'max. 42 megabytes'
+        help_text = 'max. 42 megabytes',
+        required = False
     )
 
 class ProfilerChoiceForm(forms.Form):
