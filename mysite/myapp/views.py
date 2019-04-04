@@ -18,8 +18,7 @@ def list(request):
         form = DocumentForm(request.POST, request.FILES)
         process_file = request.POST.getlist('process_file')
         if form.is_valid():
-            filepath = request.FILES.get('filepath', False)
-            if filepath:
+            if 'docfile' in request.FILES:
                 newdoc = Document(docfile=request.FILES['docfile'])
                 newdoc.save()
 
