@@ -1,3 +1,4 @@
 py_stringsimjoin
 myenv
 mysite/db.sqlite3
+*.pyc

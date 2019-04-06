@@ -12,6 +12,50 @@ import os, sys
 
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
+
+def downloads_page(request):
+    project_dir = os.path.dirname(os.path.realpath(__file__))
+    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
+    all_documents = Document.objects.all()
+    docs_to_show = []
+    for document in all_documents:
+        doc_to_show = {}
+        file_url = document.docfile.url
+        file_name = os.path.basename(file_url)
+        doc_to_show['file'] = True
+        doc_to_show['file_name'] = file_name
+        doc_to_show['file_url'] = file_url
+        rules_file_path = processed_dir + os.sep + file_name + ".rules"
+        if os.path.exists(rules_file_path):
+            rules_file = True
+            rules_file_name = file_name + ".rules"
+            rules_file_url = rules_file_path
+        else:
+            rules_file = False
+            rules_file_name = ""
+            rules_file_url = ""
+        doc_to_show['rules_file'] = rules_file
+        doc_to_show['rules_file_name'] = rules_file_name
+        doc_to_show['rules_file_url'] = rules_file_url
+        clean_file_path = processed_dir + os.sep + file_name + ".clean"
+        print(clean_file_path)
+        if os.path.exists(clean_file_path):
+            print("Hah")
+            clean_file = True
+            clean_file_name = file_name + ".clean"
+            clean_file_url = clean_file_path
+        else:
+            print("Nah")
+            clean_file = False
+            clean_file_name = ""
+            clean_file_url = ""
+        doc_to_show['clean_file'] = clean_file
+        doc_to_show['clean_file_name'] = clean_file_name
+        doc_to_show['clean_file_url'] = clean_file_url
+        docs_to_show.append(doc_to_show)
+        print(docs_to_show)
+    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
+
 def list(request):
     # Handle file upload
     if request.method == 'POST':
