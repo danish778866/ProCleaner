@@ -69,7 +69,8 @@ def list(request):
                 table_path = project_dir + newdoc.docfile.url
                 A = pd.read_csv(table_path, names=['foo'])
                 A['id'] = range(0, len(A))
-                A.to_csv(table_path, index=False)
+                column_order = ['id', 'foo']
+                A[column_order].to_csv(table_path, index=False)
 
                 # Redirect to the document list after POST
                 request.session['uploaded_file_path'] = newdoc.docfile.url
@@ -112,23 +113,16 @@ def clean_file(request):
     uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
     A = pd.read_csv(uploaded_file_path)
+    new_foo = []
     for index, row in A.iterrows():
         if row['foo'] in substitute:
-            A.set_value(index, 'foo', substitute[row['foo']])
-    #uploaded_file = open(uploaded_file_path, "r")
-    #clean_file = open(cleaned_file_path, "w")
-    #line = uploaded_file.readline()
-    #while line:
-    #    line = line.strip()
-    #    if line in substitute.keys():
-    #        ret_val = ret_val + line + " "
-    #        clean_file.write(substitute[line] + "\n")
-    #    else:
-    #        clean_file.write(line + "\n")
-    #    line = uploaded_file.readline()
-    #uploaded_file.close()
-    #clean_file.close()
-    A.to_csv(cleaned_file_path, index=False)
+            #A.set_value(index, 'foo', substitute[row['foo']])
+            new_foo.append(substitute[row['foo']])
+        else:
+            new_foo.append(row['foo'])
+    A['new_foo'] = new_foo
+    column_order = ['id','foo','new_foo']
+    A[column_order].to_csv(cleaned_file_path, index=False)
     return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
                                                ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
 
@@ -140,21 +134,23 @@ def show_doc(request):
         if profiler_choice == "1":
             table_A_path = project_dir + uploaded_file
             table_B_path = project_dir + uploaded_file
-            A = pd.read_csv(table_A_path, names=['foo', 'id'])
-            #A['id'] = range(0, len(A))
-            B = pd.read_csv(table_B_path, names=['foo', 'id'])
-            #B['id'] = range(0, len(B))
+            A = pd.read_csv(table_A_path, names=['id', 'foo'])
+            B = pd.read_csv(table_B_path, names=['id', 'foo'])
             qg3_tok = sm.QgramTokenizer(qval=3)
-            #ws = sm.WhitespaceTokenizer(return_set=True)
             output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.3,
                                         l_out_attrs=['foo'], r_out_attrs=['foo'])
             similar_pairs = []
+            considered_pairs = []
             for index, row in output_pairs.iterrows():
                 if row['_sim_score'] < 1.0:
                     current_pair = {}
                     current_pair['0'] = row['l_foo']
                     current_pair['1'] = row['r_foo']
-                    similar_pairs.append(current_pair)
+                    pair_together = current_pair['1'] + current_pair['0']
+                    pair_to_add = current_pair['0'] + current_pair['1']
+                    if pair_together not in considered_pairs:
+                        similar_pairs.append(current_pair)
+                        considered_pairs.append(pair_to_add)
         else:
             similar_pairs = []
     ret_val = request.POST
