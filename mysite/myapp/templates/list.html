@@ -4,6 +4,7 @@
 <div class="container">
     <div class="row">
          <div class="item col-sm-12">
+            Existing Documents to choose from (Select one or more):
             <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
             {% if all_documents %}

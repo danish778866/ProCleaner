@@ -7,7 +7,7 @@
 <form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 <p>{{ form.non_field_errors }}</p>
-<p>{{ form.profiler_choice_label.label_tag }}</p>
+<p>Please select an action: </p>
 <p>
 {{ form.profiler_choice_label.errors }}
 {{ form.profiler_choice_label }}

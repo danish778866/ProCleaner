@@ -1,48 +1,48 @@
 body {
-    background-color: #D2B48C;
-      font: 20px Montserrat, sans-serif;
-      line-height: 1.8;
+      background-color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
 }
 
 .container {
-    background-color: #F5DEB3;
-    padding: 20px;
-    border-radius: 2%;
-    font-size: 15px;
+    background-color: #fff;
+    font-size: 100%;
+    font-family: inherit;
 }
 
 .navbar {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border: 0;
-    border-radius: 0;
-    margin-bottom: 0;
-    font-size: 12px;
-    letter-spacing: 5px;
+    font-size: 100%;
+    font-family: inherit;
 }
 .navbar-nav  li a:hover {
-    color: #1abc9c !important;
+    color: #fff !important;
+}
+
+#header_custom {
+    background-color: #fff;
+    font-size: 100%;
+    font-family: inherit;
 }
 
 .report {
-    background-color: yellow;
+    background-color: #fff;
 }
 
 .code {
-    background-color: lightgreen;
+    background-color: #fff;
 }
 
 .item {
-    background-color: #FFF8DC; 
-    border-radius: 2%;
-    padding: 2px;
+    border-top-style: solid;
+    border-top-width: thin;
+    background-color: #fff; 
     margin-bottom: 10px;
+    padding-top: 10px;
 }
 
 .itemhead {
-    background-color: #D2B48C;
+    background-color: #fff;
     text-align: center;
-    padding: 5px;
     margin: 0px;
     font-family: "Comic Sans MS", cursive, sans-serif;
 }
