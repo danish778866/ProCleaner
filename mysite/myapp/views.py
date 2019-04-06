@@ -148,6 +148,7 @@ def show_doc(request):
         else:
             similar_pairs = []
     ret_val = request.POST
+    A.to_csv(table_A_path, index=False)
     return render(request, 'show_doc.html', {'file_path': uploaded_file, 'ret_val': ret_val, 'similar_pairs': similar_pairs})
     
 # Create your views here.
