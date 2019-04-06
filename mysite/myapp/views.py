@@ -65,6 +65,11 @@ def list(request):
             if 'docfile' in request.FILES:
                 newdoc = Document(docfile=request.FILES['docfile'])
                 newdoc.save()
+                project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+                table_path = project_dir + newdoc.docfile.url
+                A = pd.read_csv(table_path, names=['foo'])
+                A['id'] = range(0, len(A))
+                A.to_csv(table_path, index=False)
 
                 # Redirect to the document list after POST
                 request.session['uploaded_file_path'] = newdoc.docfile.url
@@ -106,19 +111,24 @@ def clean_file(request):
     rules_file.close()
     uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
-    uploaded_file = open(uploaded_file_path, "r")
-    clean_file = open(cleaned_file_path, "w")
-    line = uploaded_file.readline()
-    while line:
-        line = line.strip()
-        if line in substitute.keys():
-            ret_val = ret_val + line + " "
-            clean_file.write(substitute[line] + "\n")
-        else:
-            clean_file.write(line + "\n")
-        line = uploaded_file.readline()
-    uploaded_file.close()
-    clean_file.close()
+    A = pd.read_csv(uploaded_file_path)
+    for index, row in A.iterrows():
+        if row['foo'] in substitute:
+            A.set_value(index, 'foo', substitute[row['foo']])
+    #uploaded_file = open(uploaded_file_path, "r")
+    #clean_file = open(cleaned_file_path, "w")
+    #line = uploaded_file.readline()
+    #while line:
+    #    line = line.strip()
+    #    if line in substitute.keys():
+    #        ret_val = ret_val + line + " "
+    #        clean_file.write(substitute[line] + "\n")
+    #    else:
+    #        clean_file.write(line + "\n")
+    #    line = uploaded_file.readline()
+    #uploaded_file.close()
+    #clean_file.close()
+    A.to_csv(cleaned_file_path, index=False)
     return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
                                                ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
 
@@ -130,10 +140,10 @@ def show_doc(request):
         if profiler_choice == "1":
             table_A_path = project_dir + uploaded_file
             table_B_path = project_dir + uploaded_file
-            A = pd.read_csv(table_A_path, names=['foo'])
-            A['id'] = range(0, len(A))
-            B = pd.read_csv(table_B_path, names=['foo'])
-            B['id'] = range(0, len(B))
+            A = pd.read_csv(table_A_path, names=['foo', 'id'])
+            #A['id'] = range(0, len(A))
+            B = pd.read_csv(table_B_path, names=['foo', 'id'])
+            #B['id'] = range(0, len(B))
             qg3_tok = sm.QgramTokenizer(qval=3)
             #ws = sm.WhitespaceTokenizer(return_set=True)
             output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.3,
@@ -148,7 +158,6 @@ def show_doc(request):
         else:
             similar_pairs = []
     ret_val = request.POST
-    A.to_csv(table_A_path, index=False)
     return render(request, 'show_doc.html', {'file_path': uploaded_file, 'ret_val': ret_val, 'similar_pairs': similar_pairs})
     
 # Create your views here.
