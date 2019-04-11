@@ -4,6 +4,7 @@
 <div class="container">
   <div class="row">
     <div class="item col-sm-12">
+      Number of candidate pairs: {{ num_pairs }} <br>
       Please select the correct label out of the candidate pairs: <br>        
       <form action="{% url 'clean_file' %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}

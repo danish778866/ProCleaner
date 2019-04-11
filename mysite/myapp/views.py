@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 import py_stringsimjoin as ssj
 import py_stringmatching as sm
 import pandas as pd
-import os, sys
+import os, sys, json
 
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
@@ -142,7 +142,7 @@ def show_doc(request):
             similar_pairs = []
             considered_pairs = []
             for index, row in output_pairs.iterrows():
-                if row['_sim_score'] < 1.0:
+                if row['_sim_score'] > 0.2 and row['_sim_score'] < 1.0:
                     current_pair = {}
                     current_pair['0'] = row['l_foo']
                     current_pair['1'] = row['r_foo']
@@ -151,9 +151,29 @@ def show_doc(request):
                     if pair_together not in considered_pairs:
                         similar_pairs.append(current_pair)
                         considered_pairs.append(pair_to_add)
+            num_pairs = len(similar_pairs)
+            return render(request, 'show_doc.html', {'file_path': uploaded_file, 'similar_pairs': similar_pairs, 'num_pairs': num_pairs})
         else:
-            similar_pairs = []
-    ret_val = request.POST
-    return render(request, 'show_doc.html', {'file_path': uploaded_file, 'ret_val': ret_val, 'similar_pairs': similar_pairs})
+            table_A_path = project_dir + uploaded_file
+            A = pd.read_csv(table_A_path, names=['id', 'foo'])
+            stats, lengths = stats_length_strings(A, 'foo')
+            json_data = json.dumps({"lengths": lengths})
+            return render(request, 'show_stats.html', {'stats': stats, 'lengths': lengths})
+
+
+def stats_length_strings(df, col_name) :
+    """
+    Generates basic statistics(measures of central tendency and histogram) on length of strings
+    Args:
+        df (DataFrame): the dataframe
+        col_name (str): column name representing the column in question
+    Returns:
+        Measures of central tendency - Min, Max, Mean, Std, Median
+        Histogram on string lengths in the column
+    """
+    df['tmp_lengths'] = df[col_name].str.len()
     
-# Create your views here.
+    # Min, Max, Mean, Standard deviation and Median length
+    stats = df['tmp_lengths'].agg(['min', 'max', 'mean', 'std', 'median']).round(decimals=2).tolist()
+    return stats, df['tmp_lengths'].tolist()
+    

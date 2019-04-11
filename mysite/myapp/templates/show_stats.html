@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="item col-sm-12">         
+      <p>Min: {{ stats.0 }}</p>
+      <p>Max: {{ stats.1 }}</p>
+      <p>Mean: {{ stats.2 }}</p>
+      <p>Standard Deviation: {{ stats.3 }}</p>
+      <p>Median: {{ stats.4 }}</p>
+      <div id="hist-one"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+//var jsonstr = JSON.stringify('{{ json_data }}');
+//var data = JSON.parse(jsonstr)
+//console.log(data['lengths']);
+var x = {{ lengths }}
+var trace = {
+    x: x,
+    type: 'histogram',
+  };
+var data = [trace];
+Plotly.newPlot('hist-one', data)
+{% endblock %}
