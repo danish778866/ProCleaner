@@ -153,12 +153,44 @@ def show_doc(request):
                         considered_pairs.append(pair_to_add)
             num_pairs = len(similar_pairs)
             return render(request, 'show_doc.html', {'file_path': uploaded_file, 'similar_pairs': similar_pairs, 'num_pairs': num_pairs})
-        else:
+        elif profiler_choice == "2":
             table_A_path = project_dir + uploaded_file
             A = pd.read_csv(table_A_path, names=['id', 'foo'])
             stats, lengths = stats_length_strings(A, 'foo')
+            stats_words, lengths_words, num_capitals = stats_words_in_strings(A, 'foo')
             json_data = json.dumps({"lengths": lengths})
-            return render(request, 'show_stats.html', {'stats': stats, 'lengths': lengths})
+            return render(request, 'show_stats.html', 
+                {'stats': stats, 
+                'lengths': lengths,
+                'stats_words': stats_words,
+                'lengths_words': lengths_words,
+                'num_capitals': num_capitals
+                })
+        else:
+            table_A_path = project_dir + uploaded_file
+            A = pd.read_csv(table_A_path, names=['id', 'foo'])
+
+            # total number of strings
+            total = float(len(A['foo']))
+
+            # find uniqueness
+            n_uniques, pervasiveness_uniques, duplicates = fraction_uniques(A, 'foo')
+
+            # find missing values - useless for now as doesn't account for -1, unknown
+            n_missing, pervasiveness_missing = contains_missing_values_global_syn(A, 'foo')
+            
+            # type recognition
+            type_pervasiveness_dict = type_recognition(A, 'foo')
+
+            # return the different errors to the corresponding html
+            return render(request, 'show_errors.html', {
+                'n_uniques': n_uniques,
+                'pervasiveness_uniques': pervasiveness_uniques, 
+                'duplicates': duplicates,
+                'n_missing': n_missing,
+                'pervasiveness_missing': pervasiveness_missing,
+                'type_pervasiveness_dict': type_pervasiveness_dict
+                })
 
 
 def stats_length_strings(df, col_name) :
@@ -176,4 +208,121 @@ def stats_length_strings(df, col_name) :
     # Min, Max, Mean, Standard deviation and Median length
     stats = df['tmp_lengths'].agg(['min', 'max', 'mean', 'std', 'median']).round(decimals=2).tolist()
     return stats, df['tmp_lengths'].tolist()
+
+def stats_words_in_strings(df, col_name) :
+    """
+    Generates basic statistics(measures of central tendency and histogram) on number of words in strings
+    Args:
+        df (DataFrame): the dataframe
+        col_name (str): column name representing the column in question
+    Returns:
+        Measures of central tendency - Min, Max, Mean, Std, Median
+        Histogram on number of words in the column
+    """
+    df['tmp_words'] = df[col_name].str.split()
+    df['tmp_num_words'] = df['tmp_words'].apply(lambda x: len(x))
+    
+    # Min, Max, Mean, Standard deviation and Median length
+    stats = df['tmp_num_words'].agg(['sum', 'min', 'max', 'mean', 'std', 'median']).round(decimals=2).tolist()
+    
+    # Number of Captitalized Words
+    count_words = 0
+    count_capitals = 0
+    for list_str in df['tmp_words']:
+        for w in list_str:
+            count_words = count_words + 1
+            if w[0].isupper():
+                count_capitals = count_capitals+1
+
+    # return stats of words, num_words col to make histogram, and count_capitals
+    return stats, df['tmp_num_words'].tolist(), count_capitals
+    
+def fraction_uniques(df, col_name) :
+    """
+    Calculates the fraction of unique values in the column
+    Args:
+        df (DataFrame): the dataframe
+        col_name (str): column name representing the column in question
+    Returns:
+        Number of Unique Values/ Number of total values
+    """
+    n_uniques = len(df[col_name].unique())
+    pervasiveness = n_uniques/float(len(df[col_name]))
+    boolean_duplicates = df[col_name].duplicated()
+    duplicates = df[boolean_duplicates == True][col_name].head().tolist()
+    return n_uniques, pervasiveness, duplicates
+
+def contains_missing_values_global_syn(df, col_name) :
+    """
+    Tells the pervasiveness of the missing values in the string column
+    Note: NaN, was not used, as it is only valid for floating point numbers
+    Args:
+        df (DataFrame): the dataframe
+        col_name (str): column name representing the column in question
+    Returns:
+        No. of Missing Values/ Total no. of values in the column
+    """
+    n_missing_values = float(len(df[col_name])) - df[col_name].count()
+    return n_missing_values, 1.0 - (n_missing_values/float(len(df[col_name])))
+
+def type_recognition(df, col_name) :
+    """
+    Tells the pervasivness of different types of the values in the column 
+    Note: The types checked for are:
+    1. Alphabetic
+    2. Alphanumeric
+    3. Numeric
+    4. Phone
+    5. Date
+    Args:
+        df (DataFrame): the dataframe
+        col_name (str): column name representing the column in question
+    Returns:
+        Dict < Type T, Pervasivness in column(No. of values of T/ Total no. of values in the column)>
+    """
+    n_alpha = sum(df[col_name].str.isalpha())
+    pervasivness_alpha = n_alpha/float(len(df[col_name]))
+    
+    n_alphanumeric = sum(df[col_name].str.isalnum())
+    pervasivness_alphanumeric = n_alphanumeric/float(len(df[col_name]))
+    
+    n_numeric = sum(df[col_name].str.isdigit())
+    pervasivness_numeric = n_numeric/float(len(df[col_name]))
+    
+    
+    # validate phone number entries
+    import re
+    def validNumber(phone_number):
+        pattern = re.compile("\D?(\d{0,3}?)\D{0,2}(\d{3})?\D{0,2}(\d{3})\D?(\d{4})$", re.IGNORECASE)
+        return pattern.match(phone_number) is not None
+
+    n_phone = sum(df[col_name].apply(validNumber))
+    pervasivness_phone = n_phone/float(len(df[col_name]))
+    
+    # validate date entries
+    import datetime
+    def validate_date(date_text):
+        try:
+            datetime.datetime.strptime(date_text, '%Y-%m-%d')
+            return True
+        except ValueError:
+            return False
+    n_date = sum(df[col_name].apply(validate_date))
+    pervasivness_date = n_date/float(len(df[col_name]))
+    return {
+        'n_alpha': n_alpha,
+        'pervasivness_alpha': pervasivness_alpha,
+        'n_alphanumeric': n_alphanumeric,
+        'pervasivness_alphanumeric': pervasivness_alphanumeric,
+        'n_numeric': n_numeric,
+        'pervasivness_numeric': pervasivness_numeric,
+        'n_phone': n_phone,
+        'pervasivness_phone': pervasivness_phone,
+        'n_date': n_date,
+        'pervasivness_date': pervasivness_date       
+    }
+
+    
+
+    
     

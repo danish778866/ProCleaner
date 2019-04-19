@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="item col-sm-12">   
+      <ol>Checking for duplicates:
+        <li> Number of uniques: {{n_uniques}}</li>
+        <li> Fraction of uniques: {{ pervasiveness_uniques }}</li>
+        <li> Some duplicates: {{duplicates}} </li>
+      </ol>
+      <ol>Checking for missing values:
+        <li> Number of missing values: {{n_missing}}</li>
+        <li> Fraction of missing values: {{pervasiveness_missing}}</li>
+      </ol>
+      <ol> Checking for type of values:
+        {% for key, value in type_pervasiveness_dict.items %} 
+          <li> {{key}} - {{value}}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+//var jsonstr = JSON.stringify('{{ json_data }}');
+//var data = JSON.parse(jsonstr)
+//console.log(data['lengths']);
+//var x = {{ lengths }}
+//var trace = {
+//    x: x,
+//    type: 'histogram',
+//  };
+//var data = [trace];
+//Plotly.newPlot('hist-one', data)
+{% endblock %}

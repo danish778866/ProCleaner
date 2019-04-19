@@ -3,13 +3,27 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="item col-sm-12">         
-      <p>Min: {{ stats.0 }}</p>
-      <p>Max: {{ stats.1 }}</p>
-      <p>Mean: {{ stats.2 }}</p>
-      <p>Standard Deviation: {{ stats.3 }}</p>
-      <p>Median: {{ stats.4 }}</p>
+    <div class="item col-sm-12"> 
+      <ol>Statistics on string lengths: 
+      	<li>Minimum String Length: {{ stats.0 }}</li>
+      	<li>Max String Length: {{ stats.1 }}</li>
+      	<li>Mean String Length: {{ stats.2 }}</li>
+      	<li>Standard Deviation in String Lengths: {{ stats.3 }}</li>
+      	<li>Median String Length: {{ stats.4 }}</li>
+      </ol>
       <div id="hist-one"></div>
+    </div>
+    <div class="item col-sm-12"> 
+      <ol>Statistics on words in each string: 
+      	<li>Total number of words across all strings: {{ stats_words.0 }}</li>
+      	<li>Number of words, in string containing least number of words: {{ stats_words.1 }}</li>
+      	<li>Number of words, in string containing maximum number of words: {{ stats_words.2 }}</li>
+      	<li>Mean number of words: {{ stats_words.3 }}</li>
+      	<li>Standard Deviation: {{ stats_words.4 }}</li>
+      	<li>Median number of words: {{ stats_words.5 }}</li>
+      	<li>Number of words beginning with capital letter: {{ num_capitals }} </li>
+      </ol>
+      <div id="hist-two"></div>
     </div>
   </div>
 </div>
@@ -25,4 +39,12 @@ var trace = {
   };
 var data = [trace];
 Plotly.newPlot('hist-one', data)
+
+var x_words = {{ lengths_words }}
+var trace_words = {
+    x: x_words,
+    type: 'histogram',
+  };
+var data_words = [trace_words];
+Plotly.newPlot('hist-two', data_words)
 {% endblock %}
