@@ -6,12 +6,18 @@
 
 body, html{
   height: 100%;
-  background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
+  background-color: #6d695c;
+background-image:
+repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
+repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
+linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
+linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
+background-size: 70px 120px;
 	font-family: 'Lato', sans-serif;
 }
 
 .container {
-    background-color: #fff;
+  background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
     font-size: 100%;
     font-family: inherit;
 }
@@ -25,7 +31,6 @@ body, html{
 }
 
 #header_custom {
-    background-color: #fff;
     font-size: 100%;
     font-family: inherit;
 }
@@ -41,13 +46,11 @@ body, html{
 .item {
     border-top-style: solid;
     border-top-width: thin;
-    background: #fff;
     margin-bottom: 10px;
     padding-top: 10px;
 }
 
 .itemhead {
-    background-color: #fff;
     text-align: center;
     margin: 0px;
     font-family: "Comic Sans MS", cursive, sans-serif;
