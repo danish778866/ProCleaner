@@ -70,7 +70,7 @@ def list(request):
                 A = pd.read_csv(table_path, names=['foo'])
                 A['id'] = range(0, len(A))
                 column_order = ['id', 'foo']
-                whitespace_striper = lambda x: x.strip()
+                whitespace_striper = lambda x: str(x).strip()
                 A['foo'] = A['foo'].apply(whitespace_striper)
                 A[column_order].to_csv(table_path, index=False)
 
@@ -100,34 +100,45 @@ def profiler_choice(request):
     return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
 
 def clean_file(request):
-    ret_val = ""
-    checks = request.POST.getlist('clean')
-    substitute = {}
+    #ret_val = ""
+    #checks = request.POST.getlist('clean')
+    #substitute = {}
+    #uploaded_file_name = request.session.get('uploaded_file_path')
+    #project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    #rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
+    #rules_file = open(rules_file_path, "w")
+    #for substitution in checks:
+    #    words = substitution.split(",")
+    #    ret_val = ret_val + words[1] + " "
+    #    substitute[words[1]] = words[0]
+    #    rules_file.write(words[1] + "->" + words[0] + "\n")
+    #rules_file.close()
+    #uploaded_file_path = project_dir + uploaded_file_name
+    #cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
+    #A = pd.read_csv(uploaded_file_path)
+    #new_foo = []
+    #for index, row in A.iterrows():
+    #    if row['foo'] in substitute:
+    #        #A.set_value(index, 'foo', substitute[row['foo']])
+    #        new_foo.append(substitute[row['foo']])
+    #    else:
+    #        new_foo.append(row['foo'])
+    #A['new_foo'] = new_foo
+    #column_order = ['id','foo','new_foo']
+    #A[column_order].to_csv(cleaned_file_path, index=False)
+    #return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
+    #                                           ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
     uploaded_file_name = request.session.get('uploaded_file_path')
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
-    rules_file = open(rules_file_path, "w")
-    for substitution in checks:
-        words = substitution.split(",")
-        ret_val = ret_val + words[1] + " "
-        substitute[words[1]] = words[0]
-        rules_file.write(words[1] + "->" + words[0] + "\n")
-    rules_file.close()
     uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
     A = pd.read_csv(uploaded_file_path)
-    new_foo = []
-    for index, row in A.iterrows():
-        if row['foo'] in substitute:
-            #A.set_value(index, 'foo', substitute[row['foo']])
-            new_foo.append(substitute[row['foo']])
-        else:
-            new_foo.append(row['foo'])
-    A['new_foo'] = new_foo
-    column_order = ['id','foo','new_foo']
-    A[column_order].to_csv(cleaned_file_path, index=False)
-    return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
-                                               ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
+    A.to_csv(cleaned_file_path, index=False)
+    return render(request,
+                  'clean_file.html',
+                  {'clean_file_name': os.path.basename(uploaded_file_name) + ".clean"}
+                 )
+
 
 def show_doc(request):
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

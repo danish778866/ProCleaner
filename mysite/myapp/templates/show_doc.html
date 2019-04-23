@@ -64,13 +64,15 @@ $("#mergebtn").click(function(){
     current_merge.push($(this).val());
   });
   $.each($("input[name='clean']:checked"), function() {
-    current_val = $(this).val()
+    current_val = $(this).val();
     $(this).val("");
+    $(this).parent().css("background-color", "#8FBC8F");
     parent_html = $(this).parent().html();
     new_parent_html = parent_html.split(">")[0] + ">" + retain_val;
-    console.log("New parent")
-    console.log(new_parent_html)
+    console.log("New parent");
+    console.log(new_parent_html);
     $(this).parent().html(new_parent_html);
+    console.log($(this).parent());
     $(this).val(retain_val);
     $(this).prop("checked", false);
   });
