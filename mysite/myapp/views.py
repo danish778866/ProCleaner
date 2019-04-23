@@ -95,8 +95,9 @@ def list(request):
 
 def profiler_choice(request):
     form = ProfilerChoiceForm()
+    profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
     uploaded_file_name = request.session.get('uploaded_file_path')
-    return render(request, 'profiler_choice.html', {'form': form, 'ret': uploaded_file_name})
+    return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
 
 def clean_file(request):
     ret_val = ""
@@ -147,7 +148,7 @@ def show_doc(request):
             A.to_csv(table_path, index=False)
             profiler_choice = "1"
         else:
-            profiler_choice = request.POST['profiler_choice_label']
+            profiler_choice = request.POST['profiler_choice']
         if profiler_choice == "1":
             table_A_path = project_dir + uploaded_file
             table_B_path = project_dir + uploaded_file

@@ -87,6 +87,6 @@ $("#mergebtn").click(function(){
   console.log(current_merge_val);
 });
 $("#donebtn").click(function(){
-  document.location.href = {% url 'clean_file' %}
+  document.location.href = "{% url 'clean_file' %}";
 });
 {% endblock %}
