@@ -45,7 +45,7 @@
     <div class="col-sm-12">
       <button type="submit" value="Clean Up" class="btn btn-primary">Clean Up</button>
       <button type="button" value="Merge" id="mergebtn" class="btn btn-info">Merge</button>
-      <button type="button" value="Done" id="done" class="btn btn-success">Done</button>
+      <button type="button" value="Done" id="donebtn" class="btn btn-success">Done</button>
         <input id="mergeval" type="hidden" name="merge" value="" />
     </div>
   </div>
@@ -53,45 +53,6 @@
 </div>
 {% endblock %}
 {% block script %}
-//$(function() {
-//
-//    /* Get all rows from your 'table' but not the first one 
-//     * that includes headers. */
-//    var cells = $('td');
-//
-//    /* Create 'click' event handler for rows */
-//    cells.on('click', function(e) {
-//
-//        /* Get current row */
-//        var cell = $(this);
-//        console.log(cell.find("input"))
-//        var ckbox = cell.first();
-//        console.log(ckbox)
-//
-//        /* Check if 'Ctrl', 'cmd' or 'Shift' keyboard key was pressed
-//         * 'Ctrl' => is represented by 'e.ctrlKey' or 'e.metaKey'
-//         * 'Shift' => is represented by 'e.shiftKey' */
-//        if ((e.ctrlKey || e.metaKey) || e.shiftKey) {
-//            /* If pressed highlight the other row that was clicked */
-//            cell.addClass('highlight');
-//        } else {
-//            /* Otherwise just highlight one row and clean others */
-//            cells.removeClass('highlight');
-//            cell.addClass('highlight');
-//        }
-//
-//    });
-//
-//    /* This 'event' is used just to avoid that the table text 
-//     * gets selected (just for styling). 
-//     * For example, when pressing 'Shift' keyboard key and clicking 
-//     * (without this 'event') the text of the 'table' will be selected.
-//     * You can remove it if you want, I just tested this in 
-//     * Chrome v30.0.1599.69 */
-//    $(document).bind('selectstart dragstart', function(e) { 
-//        e.preventDefault(); return false; 
-//    });
-//});
 $("#mergebtn").click(function(){
   var current_merge = []
   var retain_val = ""
@@ -124,5 +85,8 @@ $("#mergebtn").click(function(){
   console.log(retain_val);
   console.log(current_merge.join(","));
   console.log(current_merge_val);
+});
+$("#donebtn").click(function(){
+  document.location.href = {% url 'clean_file' %}
 });
 {% endblock %}
