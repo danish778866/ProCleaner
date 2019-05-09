@@ -234,6 +234,9 @@ def show_doc(request):
             
             # A only with non-missing values
             A_without_missing_values = A[~A[col_missing]]
+            
+            total_non_missing_values = len(A_without_missing_values)
+
 
             # find uniqueness
             n_uniques, pervasiveness_uniques, duplicates = fraction_uniques(A_without_missing_values, 'foo')
@@ -243,8 +246,9 @@ def show_doc(request):
 
             # return the different errors to the corresponding html
             return render(request, 'show_errors.html', {
+                'n_values': total_non_missing_values,
                 'n_uniques': n_uniques,
-                'pervasiveness_uniques': pervasiveness_uniques, 
+                'pervasiveness_uniques': pervasiveness_uniques*100, 
                 'duplicates': duplicates,
                 'n_missing': n_missing,
                 'pervasiveness_missing': pervasiveness_missing,
@@ -338,7 +342,7 @@ def contains_missing_values_global_syn(df, col_name) :
     # missing values detected in the given column
     type_missing_values_caught = df[df[col_missing]][col_name].unique().tolist()
     
-    return n_missing_values, n_missing_values/float(total_values), type_missing_values_caught, col_missing
+    return n_missing_values, (n_missing_values*100)/float(total_values), type_missing_values_caught, col_missing
 
 def type_recognition(df, col_name) :
     """
@@ -355,15 +359,18 @@ def type_recognition(df, col_name) :
     Returns:
         Dict < Type T, Pervasivness in column(No. of values of T/ Total no. of values in the column)>
     """
-    
+    from collections import OrderedDict
     n_alpha = sum(df[col_name].str.isalpha())
     pervasivness_alpha = n_alpha/float(len(df[col_name]))
+    alpha_sample = df[df[col_name].str.isalpha()][col_name].head().tolist()
     
     n_alphanumeric = sum(df[col_name].str.isalnum())
     pervasivness_alphanumeric = n_alphanumeric/float(len(df[col_name]))
+    alpha_num_sample = df[df[col_name].str.isalnum()][col_name].head().tolist()
     
     n_numeric = sum(df[col_name].str.isdigit())
     pervasivness_numeric = n_numeric/float(len(df[col_name]))
+    numeric_sample = df[df[col_name].str.isdigit()][col_name].head().tolist()
     
     
     # validate phone number entries
@@ -374,6 +381,7 @@ def type_recognition(df, col_name) :
 
     n_phone = sum(df[col_name].apply(validNumber))
     pervasivness_phone = n_phone/float(len(df[col_name]))
+    phone_sample = df[df[col_name].apply(validNumber)][col_name].head().tolist()
     
     # validate date entries
     import datetime
@@ -385,18 +393,41 @@ def type_recognition(df, col_name) :
             return False
     n_date = sum(df[col_name].apply(validate_date))
     pervasivness_date = n_date/float(len(df[col_name]))
-    return {
-        'n_alpha': n_alpha,
-        'pervasivness_alpha': pervasivness_alpha,
-        'n_alphanumeric': n_alphanumeric,
-        'pervasivness_alphanumeric': pervasivness_alphanumeric,
-        'n_numeric': n_numeric,
-        'pervasivness_numeric': pervasivness_numeric,
-        'n_phone': n_phone,
-        'pervasivness_phone': pervasivness_phone,
-        'n_date': n_date,
-        'pervasivness_date': pervasivness_date       
-    }
+    date_sample = df[df[col_name].apply(validate_date)][col_name].head().tolist()
+
+    return OrderedDict([('No. of Alphabetic Strings', n_alpha),
+                      ('Pervasiveness of Alphabetic Strings', pervasivness_alpha*100),
+                      ('Sample of Alphabetic Strings Detected', alpha_sample),
+                      ('No. of Alphanumeric Strings', n_alphanumeric),
+                      ('Pervasiveness of Alphanumeric Strings', pervasivness_alphanumeric*100),
+                      ('Sample of Alphanumeric Strings Detected', alpha_num_sample),
+                      ('No. of Numerics', n_numeric),
+                      ('Pervasiveness of Numerics', pervasivness_numeric*100),
+                      ('Sample of Detected Numerics', numeric_sample),
+                      ('No. of Detected Phone Numbers', n_phone,),
+                      ('Pervasivness of Detected Phone Numbers', pervasivness_phone*100),
+                      ('Sample of Detected Phone Numbers', phone_sample),
+                      ('No. of Dates Detected', n_date),
+                      ('Pervasiveness of Dates', pervasivness_date*100),
+                      ('Sample of Detected Dates', date_sample)])
+
+    # return {
+    #     'No. of Alphabetic Strings': n_alpha,
+    #     'Pervasiveness of Alphabetic Strings': ,
+    #     'Sample of Alphabetic Strings Detected': alpha_sample,
+    #     ,
+    #     
+    #     ,
+    #     ,
+    #     ,
+    #     ,
+    #     
+    #     ,
+    #     ,
+    #     ,
+    #     ,
+    #             
+    # }
 
     
 
