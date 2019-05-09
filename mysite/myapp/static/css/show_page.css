@@ -1,11 +1,23 @@
-body {
+/*body {
       background-color: #fff;
       font-family: Arial, sans-serif;
       font-size: 15px;
+}*/
+
+body, html{
+  height: 100%;
+  background-color: #6d695c;
+background-image:
+repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
+repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
+linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
+linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
+background-size: 70px 120px;
+	font-family: 'Lato', sans-serif;
 }
 
 .container {
-    background-color: #fff;
+  background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
     font-size: 100%;
     font-family: inherit;
 }
@@ -19,7 +31,6 @@ body {
 }
 
 #header_custom {
-    background-color: #fff;
     font-size: 100%;
     font-family: inherit;
 }
@@ -35,13 +46,11 @@ body {
 .item {
     border-top-style: solid;
     border-top-width: thin;
-    background-color: #fff; 
     margin-bottom: 10px;
     padding-top: 10px;
 }
 
 .itemhead {
-    background-color: #fff;
     text-align: center;
     margin: 0px;
     font-family: "Comic Sans MS", cursive, sans-serif;
@@ -60,17 +69,6 @@ body {
     cursor: pointer;
 }
 
-#resume{
-    text-decoration: none;
-    color: #fff;
-    background: #50a6f6;
-    padding: 8px 10px;
-    border-radius: 3px;
-    display: block;
-    text-align: center;
-    z-index: 100;
-    transition: opacity .8s ease;
-}
 
 tr { cursor: default; }
 .highlight { background: yellow; }
@@ -154,4 +152,146 @@ tr { cursor: default; }
 		margin-top: 0;
 		opacity: 0;
 	}
+}
+
+.radio {
+ 
+     display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 20px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+/* Hide the browser's default radio button */
+.radio input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkround {
+
+    position: absolute;
+    top: 6px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #fff ;
+    border-color:#3498db;
+    border-style:solid;
+    border-width:2px;
+     border-radius: 50%;
+}
+
+
+/* When the radio button is checked, add a blue background */
+.radio input:checked ~ .checkround {
+    background-color: #fff;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkround:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radio input:checked ~ .checkround:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.radio .checkround:after {
+     left: 2px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background:#3498db;
+    
+ 
+}
+
+/* The check */
+.check {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    padding-right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.check input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff ;
+    border-color:#f8204f;
+    border-style:solid;
+    border-width:2px;
+}
+
+
+
+/* When the checkbox is checked, add a blue background */
+.check input:checked ~ .checkmark {
+    background-color: #fff  ;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.check input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.check .checkmark:after {
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid ;
+    border-color:#f8204f;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.cust-btn{
+	margin-bottom: 10px;
+	background-color: #f8204f;
+	border-width: 2px;
+	border-color: #f8204f;
+	color: #fff;
 }

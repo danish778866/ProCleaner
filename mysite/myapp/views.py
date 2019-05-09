@@ -70,6 +70,8 @@ def list(request):
                 A = pd.read_csv(table_path, names=['foo'])
                 A['id'] = range(0, len(A))
                 column_order = ['id', 'foo']
+                whitespace_striper = lambda x: str(x).strip()
+                A['foo'] = A['foo'].apply(whitespace_striper)
                 A[column_order].to_csv(table_path, index=False)
 
                 # Redirect to the document list after POST
@@ -93,66 +95,115 @@ def list(request):
 
 def profiler_choice(request):
     form = ProfilerChoiceForm()
+    profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
     uploaded_file_name = request.session.get('uploaded_file_path')
-    return render(request, 'profiler_choice.html', {'form': form, 'ret': uploaded_file_name})
+    return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
 
 def clean_file(request):
-    ret_val = ""
-    checks = request.POST.getlist('clean')
-    substitute = {}
+    #ret_val = ""
+    #checks = request.POST.getlist('clean')
+    #substitute = {}
+    #uploaded_file_name = request.session.get('uploaded_file_path')
+    #project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    #rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
+    #rules_file = open(rules_file_path, "w")
+    #for substitution in checks:
+    #    words = substitution.split(",")
+    #    ret_val = ret_val + words[1] + " "
+    #    substitute[words[1]] = words[0]
+    #    rules_file.write(words[1] + "->" + words[0] + "\n")
+    #rules_file.close()
+    #uploaded_file_path = project_dir + uploaded_file_name
+    #cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
+    #A = pd.read_csv(uploaded_file_path)
+    #new_foo = []
+    #for index, row in A.iterrows():
+    #    if row['foo'] in substitute:
+    #        #A.set_value(index, 'foo', substitute[row['foo']])
+    #        new_foo.append(substitute[row['foo']])
+    #    else:
+    #        new_foo.append(row['foo'])
+    #A['new_foo'] = new_foo
+    #column_order = ['id','foo','new_foo']
+    #A[column_order].to_csv(cleaned_file_path, index=False)
+    #return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
+    #                                           ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
     uploaded_file_name = request.session.get('uploaded_file_path')
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
-    rules_file = open(rules_file_path, "w")
-    for substitution in checks:
-        words = substitution.split(",")
-        ret_val = ret_val + words[1] + " "
-        substitute[words[1]] = words[0]
-        rules_file.write(words[1] + "->" + words[0] + "\n")
-    rules_file.close()
     uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
     A = pd.read_csv(uploaded_file_path)
-    new_foo = []
-    for index, row in A.iterrows():
-        if row['foo'] in substitute:
-            #A.set_value(index, 'foo', substitute[row['foo']])
-            new_foo.append(substitute[row['foo']])
-        else:
-            new_foo.append(row['foo'])
-    A['new_foo'] = new_foo
-    column_order = ['id','foo','new_foo']
-    A[column_order].to_csv(cleaned_file_path, index=False)
-    return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
-                                               ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
+    A.to_csv(cleaned_file_path, index=False)
+    return render(request,
+                  'clean_file.html',
+                  {'clean_file_name': os.path.basename(uploaded_file_name) + ".clean"}
+                 )
+
 
 def show_doc(request):
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     uploaded_file = request.session.get('uploaded_file_path')
+    print(request.POST)
     if request.method == 'POST':
-        profiler_choice = request.POST['profiler_choice_label']
+        if "merge" in request.POST:
+            values = ','.join(request.POST.getlist('merge'))
+            table_path = project_dir + uploaded_file
+            A = pd.read_csv(table_path)
+            values_list = values.split("|")
+            for value in values_list:
+                current_values = value.split(",")
+                retain_value = current_values[0].strip()
+                for i in range(1, len(current_values)):
+                    current_value = current_values[i].strip()
+                    A['foo'].loc[A['foo'] == current_value] = retain_value
+            A.to_csv(table_path, index=False)
+            profiler_choice = "1"
+        else:
+            profiler_choice = request.POST['profiler_choice']
         if profiler_choice == "1":
             table_A_path = project_dir + uploaded_file
             table_B_path = project_dir + uploaded_file
             A = pd.read_csv(table_A_path, names=['id', 'foo'])
             B = pd.read_csv(table_B_path, names=['id', 'foo'])
             qg3_tok = sm.QgramTokenizer(qval=3)
-            output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.3,
+            output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.6,
                                         l_out_attrs=['foo'], r_out_attrs=['foo'])
             similar_pairs = []
             considered_pairs = []
+            similar_strings = []
+            similar_strings_1 = []
+            similar_strings_2 = []
+            similar_strings_3 = []
             for index, row in output_pairs.iterrows():
-                if row['_sim_score'] > 0.2 and row['_sim_score'] < 1.0:
+                if row['_sim_score'] > 0.6 and row['_sim_score'] < 1.0:
                     current_pair = {}
                     current_pair['0'] = row['l_foo']
                     current_pair['1'] = row['r_foo']
                     pair_together = current_pair['1'] + current_pair['0']
                     pair_to_add = current_pair['0'] + current_pair['1']
-                    if pair_together not in considered_pairs:
+                    if pair_together not in considered_pairs and current_pair['0'] != current_pair['1']:
                         similar_pairs.append(current_pair)
                         considered_pairs.append(pair_to_add)
+                        if row['l_foo'] not in similar_strings:
+                            similar_strings.append(row['l_foo'])
+                        if row['r_foo'] not in similar_strings:
+                            similar_strings.append(row['r_foo'])
+                        if len(similar_strings) >= 90:
+                            break
             num_pairs = len(similar_pairs)
-            return render(request, 'show_doc.html', {'file_path': uploaded_file, 'similar_pairs': similar_pairs, 'num_pairs': num_pairs})
+            similar_strings.sort()
+            num_each = len(similar_strings) / 3
+            print(similar_strings)
+            similar_strings_1 = similar_strings[0:num_each]
+            similar_strings_2 = similar_strings[num_each:2 * num_each]
+            similar_strings_3 = similar_strings[2 * num_each:]
+            return render(request, 'show_doc.html', 
+                          {'file_path': uploaded_file, 'similar_pairs': similar_pairs, 
+                           'num_pairs': num_pairs,
+                           'similar_strings_1': similar_strings_1,
+                           'similar_strings_2': similar_strings_2,
+                           'similar_strings_3': similar_strings_3
+                          })
         elif profiler_choice == "2":
             table_A_path = project_dir + uploaded_file
             A = pd.read_csv(table_A_path, names=['id', 'foo'])

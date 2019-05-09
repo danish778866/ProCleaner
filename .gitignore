@@ -4,4 +4,5 @@ mysite/db.sqlite3
 *.pyc
 mysite/media
 mysite/myapp/static/pdf/
+mysite/myapp/migrations
 venv
