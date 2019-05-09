@@ -156,8 +156,16 @@ def show_doc(request):
         elif profiler_choice == "2":
             table_A_path = project_dir + uploaded_file
             A = pd.read_csv(table_A_path, names=['id', 'foo'])
-            stats, lengths = stats_length_strings(A, 'foo')
-            stats_words, lengths_words, num_capitals = stats_words_in_strings(A, 'foo')
+
+            # find missing values so as to calculate stats on only non-missing entries
+            n_missing, pervasiveness_missing, type_missing_values_caught, col_missing = contains_missing_values_global_syn(A, 'foo')
+            
+            # A only with non-missing values
+            A_without_missing_values = A[~A[col_missing]]
+
+            # calculate stats
+            stats, lengths = stats_length_strings(A_without_missing_values, 'foo')
+            stats_words, lengths_words, num_capitals = stats_words_in_strings(A_without_missing_values, 'foo')
             json_data = json.dumps({"lengths": lengths})
             return render(request, 'show_stats.html', 
                 {'stats': stats, 
@@ -170,17 +178,17 @@ def show_doc(request):
             table_A_path = project_dir + uploaded_file
             A = pd.read_csv(table_A_path, names=['id', 'foo'])
 
-            # total number of strings
-            total = float(len(A['foo']))
+            # find missing values so as to calculate further errors on only non-missing entries
+            n_missing, pervasiveness_missing, type_missing_values_caught, col_missing = contains_missing_values_global_syn(A, 'foo')
+            
+            # A only with non-missing values
+            A_without_missing_values = A[~A[col_missing]]
 
             # find uniqueness
-            n_uniques, pervasiveness_uniques, duplicates = fraction_uniques(A, 'foo')
+            n_uniques, pervasiveness_uniques, duplicates = fraction_uniques(A_without_missing_values, 'foo')
 
-            # find missing values - useless for now as doesn't account for -1, unknown
-            n_missing, pervasiveness_missing = contains_missing_values_global_syn(A, 'foo')
-            
-            # type recognition
-            type_pervasiveness_dict = type_recognition(A, 'foo')
+            # type recognition in non-missing values of 'foo'
+            type_pervasiveness_dict = type_recognition(A_without_missing_values, 'foo')
 
             # return the different errors to the corresponding html
             return render(request, 'show_errors.html', {
@@ -189,6 +197,7 @@ def show_doc(request):
                 'duplicates': duplicates,
                 'n_missing': n_missing,
                 'pervasiveness_missing': pervasiveness_missing,
+                'type_missing_values_caught': type_missing_values_caught,
                 'type_pervasiveness_dict': type_pervasiveness_dict
                 })
 
@@ -260,10 +269,25 @@ def contains_missing_values_global_syn(df, col_name) :
         df (DataFrame): the dataframe
         col_name (str): column name representing the column in question
     Returns:
-        No. of Missing Values/ Total no. of values in the column
+        n_missing_values: No. of missing values
+        n_missing_values/float(total_values): No. of Missing Values/ Total no. of values in the column
+        type_missing_values_caught: missing values detected in the given column
+        col_missing: col name of boolean column, each entry of which tells whether the corresponding entry in col_name is missing value or not
     """
-    n_missing_values = float(len(df[col_name])) - df[col_name].count()
-    return n_missing_values, 1.0 - (n_missing_values/float(len(df[col_name])))
+    # tell the df to consider these values as missing values in addition to what it considers normally(None type)
+    list_missing_types = ["unknown", "Unknown", "NA", "na", "N/A", "n/a", "missing", "Missing"]
+    # create a new column in the df which stores whether the corresponding entry in col_name is missing or not
+    col_missing = 'bool_missing'
+    # replace the occurences of these values in the column copy, by None
+    df['tmp_missing'] = df[col_name].replace(list_missing_types, [None for i in range(len(list_missing_types))])
+    # calculate the number of missing values based on tmp_missing column
+    df[col_missing] = df['tmp_missing'].isnull()
+    n_missing_values = df[col_missing].sum().sum()
+    total_values = len(df[col_missing])
+    # missing values detected in the given column
+    type_missing_values_caught = df[df[col_missing]][col_name].unique().tolist()
+    
+    return n_missing_values, n_missing_values/float(total_values), type_missing_values_caught, col_missing
 
 def type_recognition(df, col_name) :
     """
@@ -280,6 +304,7 @@ def type_recognition(df, col_name) :
     Returns:
         Dict < Type T, Pervasivness in column(No. of values of T/ Total no. of values in the column)>
     """
+    
     n_alpha = sum(df[col_name].str.isalpha())
     pervasivness_alpha = n_alpha/float(len(df[col_name]))
     
