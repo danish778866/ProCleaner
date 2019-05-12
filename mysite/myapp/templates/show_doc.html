@@ -7,38 +7,59 @@
       Number of candidate pairs: {{ num_pairs }} <br>
       Please select the correct label out of the candidate pairs: <br>        
       {% csrf_token %}
-    <div class="item col-sm-4">
+    <div class="col-sm-4">
+    <div class="item col-sm-12">
         <table class="table table-dark table-bordered">
           <tbody>
             {% for s in similar_strings_1 %}
             <tr>
-              <td><input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}</td>
+              <td>
+              <label class="control control--checkbox">
+                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                <div class="control__indicator"></div>
+              <label>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
     </div>
-    <div class="item col-sm-4">
+    </div>
+    <div class="col-sm-4">
+    <div class="item col-sm-12">
         <table class="table table-dark table-bordered">
           <tbody>
             {% for s in similar_strings_2 %}
             <tr>
-              <td><input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}</td>
+              <td>
+              <label class="control control--checkbox">
+                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                <div class="control__indicator"></div>
+              <label>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
     </div>
-    <div class="item col-sm-4">
+    </div>
+    <div class="col-sm-4">
+    <div class="item col-sm-12">
         <table class="table table-dark table-bordered">
           <tbody>
             {% for s in similar_strings_3 %}
             <tr>
-              <td><input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}</td>
+              <td>
+              <label class="control control--checkbox">
+                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                <div class="control__indicator"></div>
+              <label>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
+    </div>
     </div>
   </div>
   <div class="row">
@@ -66,13 +87,15 @@ $("#mergebtn").click(function(){
   $.each($("input[name='clean']:checked"), function() {
     current_val = $(this).val();
     $(this).val("");
+    parent = $(this).parent();
     $(this).parent().css("background-color", "#8FBC8F");
     parent_html = $(this).parent().html();
     new_parent_html = parent_html.split(">")[0] + ">" + retain_val;
     console.log("New parent");
     console.log(new_parent_html);
     $(this).parent().html(new_parent_html);
-    console.log($(this).parent());
+    console.log(parent);
+    console.log($(parent).children());
     $(this).val(retain_val);
     $(this).prop("checked", false);
   });

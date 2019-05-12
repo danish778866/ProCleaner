@@ -44,6 +44,8 @@ background-size: 70px 120px;
 }
 
 .item {
+    border-radius: 25px;
+    background: #fff;
     border-top-style: solid;
     border-top-width: thin;
     margin-bottom: 10px;
@@ -154,7 +156,7 @@ tr { cursor: default; }
 	}
 }
 
-.radio {
+/*.radio {
  
      display: block;
     position: relative;
@@ -168,14 +170,12 @@ tr { cursor: default; }
     user-select: none
 }
 
-/* Hide the browser's default radio button */
 .radio input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
 }
 
-/* Create a custom radio button */
 .checkround {
 
     position: absolute;
@@ -191,24 +191,20 @@ tr { cursor: default; }
 }
 
 
-/* When the radio button is checked, add a blue background */
 .radio input:checked ~ .checkround {
     background-color: #fff;
 }
 
-/* Create the indicator (the dot/circle - hidden when not checked) */
 .checkround:after {
     content: "";
     position: absolute;
     display: none;
 }
 
-/* Show the indicator (dot/circle) when checked */
 .radio input:checked ~ .checkround:after {
     display: block;
 }
 
-/* Style the indicator (dot/circle) */
 .radio .checkround:after {
      left: 2px;
     top: 2px;
@@ -220,7 +216,6 @@ tr { cursor: default; }
  
 }
 
-/* The check */
 .check {
     display: block;
     position: relative;
@@ -235,14 +230,12 @@ tr { cursor: default; }
     user-select: none;
 }
 
-/* Hide the browser's default checkbox */
 .check input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
 }
 
-/* Create a custom checkbox */
 .checkmark {
     position: absolute;
     top: 3px;
@@ -257,24 +250,20 @@ tr { cursor: default; }
 
 
 
-/* When the checkbox is checked, add a blue background */
 .check input:checked ~ .checkmark {
     background-color: #fff  ;
 }
 
-/* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
     content: "";
     position: absolute;
     display: none;
 }
 
-/* Show the checkmark when checked */
 .check input:checked ~ .checkmark:after {
     display: block;
 }
 
-/* Style the checkmark/indicator */
 .check .checkmark:after {
     left: 5px;
     top: 1px;
@@ -294,4 +283,72 @@ tr { cursor: default; }
 	border-width: 2px;
 	border-color: #f8204f;
 	color: #fff;
+}*/
+
+.control {
+  font-size: 18px;
+  position: relative;
+  display: block;
+  margin-bottom: 15px;
+  padding-left: 30px;
+  cursor: pointer;
+}
+
+.control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.control__indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background: #e6e6e6;
+}
+
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator {
+  background: #ccc;
+}
+
+.control input:checked ~ .control__indicator {
+  background: #2aa1c0;
+}
+
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator {
+  background: #0e647d;
+}
+
+.control input:disabled ~ .control__indicator {
+  pointer-events: none;
+  opacity: .6;
+  background: #e6e6e6;
+}
+
+.control__indicator:after {
+  position: absolute;
+  display: none;
+  content: '';
+}
+
+.control input:checked ~ .control__indicator:after {
+  display: block;
+}
+
+.control--checkbox .control__indicator:after {
+  top: 4px;
+  left: 8px;
+  width: 3px;
+  height: 8px;
+  transform: rotate(45deg);
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+}
+
+.control--checkbox input:disabled ~ .control__indicator:after {
+  border-color: #7b7b7b;
 }
