@@ -79,7 +79,8 @@ def list(request):
             else:
                 request.session['uploaded_file_path'] = process_file[0]
 
-            return HttpResponseRedirect(reverse('profiler_choice'))
+            #return HttpResponseRedirect(reverse('profiler_choice'))
+            return HttpResponseRedirect(reverse('list_tuples'))
     else:
         form = DocumentForm()  # A empty, unbound form
 
@@ -98,6 +99,15 @@ def profiler_choice(request):
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
     uploaded_file_name = request.session.get('uploaded_file_path')
     return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
+
+def list_tuples(request):
+    uploaded_file_name = request.session.get('uploaded_file_path')
+    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    uploaded_file_path = project_dir + uploaded_file_name
+    A = pd.read_csv(uploaded_file_path)
+    sample_tuples = A['foo'].head().tolist()
+    return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
+
 
 def clean_file(request):
     #ret_val = ""

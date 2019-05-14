@@ -2,10 +2,10 @@
 {% load staticfiles %}
 {% block content %}
 <div class="container">
-    <div class="row">
-         <div class="item col-sm-12">
-            Existing Documents to choose from (Select one or more):
             <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+    <div class="row">
+         <div class="item col-sm-8 col-sm-offset-2">
+            Existing Documents to choose from (Select one or more):
                 {% csrf_token %}
             {% if all_documents %}
                 <ul>
@@ -25,9 +25,13 @@
                     {{ form.docfile.errors }}
                     {{ form.docfile }}
                 </p>
-                <button type="submit" value="Submit" class="btn btn-success">Submit</button>
+    </div>
+    </div>
+    <div class="row">
+         <div class="col-sm-12 text-center">
+            <button type="submit" value="Upload" class="btn btn-success">Upload</button>
+    </div>
+    </div>
             </form>
-    </div>
-    </div>
     </div>
 {% endblock %}
