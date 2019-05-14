@@ -3,17 +3,19 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="item col-sm-12">         
+    <div class="item col-sm-4 col-sm-offset-4">         
 <form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 <p>Please select one of the following options:</p>
 {% for option in profiler_options %}
-<label class="radio">{{ option.1 }}
+<label class="control control--radio">{{ option.1 }}
   <input type="radio" name="profiler_choice" value="{{ option.0 }}">
-  <span class="checkround"></span>
+  <div class="control__indicator"></div>
 </label>
 {% endfor %}
+<div class="col-sm-12 text-center">
 <button type="submit" value="Submit" class="btn btn-success">Execute</button>
+</div>
 </form>
     </div>
   </div>

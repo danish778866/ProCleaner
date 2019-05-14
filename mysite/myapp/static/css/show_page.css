@@ -50,6 +50,7 @@ background-size: 70px 120px;
     border-top-width: thin;
     margin-bottom: 10px;
     padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .itemhead {
@@ -309,6 +310,10 @@ tr { cursor: default; }
   background: #e6e6e6;
 }
 
+.control--radio .control__indicator {
+  border-radius: 50%;
+}
+
 .control:hover input ~ .control__indicator,
 .control input:focus ~ .control__indicator {
   background: #ccc;
@@ -351,4 +356,17 @@ tr { cursor: default; }
 
 .control--checkbox input:disabled ~ .control__indicator:after {
   border-color: #7b7b7b;
+}
+
+.control--radio .control__indicator:after {
+  top: 7px;
+  left: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.control--radio input:disabled ~ .control__indicator:after {
+  background: #7b7b7b;
 }
