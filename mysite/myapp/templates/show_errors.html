@@ -4,17 +4,21 @@
 <div class="container">
   <div class="row">
     <div class="item col-sm-12"> 
-    Total Number of Non-Missing Values: {{n_values}}  
-      <ol>Checking for duplicates:
-        <li> Number of uniques: {{n_uniques}}</li>
-        <li> % of uniques: {{ pervasiveness_uniques }}</li>
-        <li> Some duplicates: {{duplicates}} </li>
-      </ol>
+    Total Number of Values: {{total_values}} <br>
+    (Below % out of total number of values)
       <ol>Checking for missing values:
         <li> Number of missing values: {{n_missing}}</li>
         <li> % of missing values: {{pervasiveness_missing}}</li>
         <li> Missing values caught in the dataset: {{type_missing_values_caught}}</li>
       </ol>
+    Total Number of Non-Missing Values: {{n_values}}  <br>
+    (Below % out of number of non-missing values)
+      <ol>Checking for duplicates:
+        <li> Number of uniques: {{n_uniques}}</li>
+        <li> % of uniques: {{ pervasiveness_uniques }}</li>
+        <li> Some duplicates: {{duplicates}} </li>
+      </ol>
+      
       <ol> Checking for type of values (Pervasiveness in %):
         {% for key, value in type_pervasiveness_dict.items %} 
           <li> {{key}} - {{value}}</li>

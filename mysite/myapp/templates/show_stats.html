@@ -4,6 +4,16 @@
 <div class="container">
   <div class="row">
     <div class="item col-sm-12"> 
+    Total Number of Values: {{total_values}} <br>
+    (Below % out of total number of values)
+      <ol>Checking for missing values:
+        <li> Number of missing values: {{n_missing}}</li>
+        <li> % of missing values: {{pervasiveness_missing}}</li>
+        <li> Missing values caught in the dataset: {{type_missing_values_caught}}</li>
+      </ol>
+      <br>
+    Total Number of Non-Missing Values: {{n_values}}  <br>
+    Below Statistics only on non-missing values: <br>
       <ol>Statistics on string lengths: 
       	<li>Minimum String Length: {{ stats.0 }}</li>
       	<li>Max String Length: {{ stats.1 }}</li>
