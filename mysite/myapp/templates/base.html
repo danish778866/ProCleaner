@@ -9,6 +9,54 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <body>
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+    		This tool allows you to clean files containing strings. <br>
+    		Assumption: A line in the file is treated as one string. <br>
+    		<br>
+    		Please follow the below steps:
+    		<ol>
+                <li> <b>Choose a file</b> and click Submit.
+           			<ul>
+           				<li>No files uploaded yet? Choose a file to upload, and click Submit. </li>
+	    				<li> Already uploaded files earlier? Select a file from the list, and click Submit.			  </li>
+	    			</ul>
+	    		</li>
+	    		<li> <b>Pick action</b>, and click Execute.		  </li>
+          <li> If chose to clean strings:   
+            <ul>
+    	    		<li> <b>Check the correct label(s)</b> out of the candidate match pairs, and click Clean Up.		  </li>
+    	    		<li> <b>Download</b> the cleaned file, and the rules used for the clean operation.  </li>
+            </ul>
+          </li>
+          <li> If chose to profile:   
+            <ul>
+              <li> <b>Profiling Statistics</b> will be shown regarding string lengths and the words containing them.      </li>
+            </ul>
+          </li>
+          <li> If chose to find errors:   
+            <ul>
+              <li> Different kinds of possible <b>errors</b> alongwith their pervasiveness will be shown.      </li>
+            </ul>
+          </li>
+	    		<li> On the Navigation bar, click Upload to go back to start page, or Download to see a list of all the files that you can download.  </li>
+            </ol>
+    </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 	    <nav class="navbar navbar-inverse">
 	      <div class="container-fluid">
 	        <div class="navbar-header">
@@ -27,7 +75,7 @@
 	        </div>
 	      </div>
 	    </nav>
-    <div class = "container">
+    <!--<div class = "container">
     	<div id = "header_custom">
     		This tool allows you to clean files containing strings. <br>
     		Assumption: A line in the file is treated as one string. <br>
@@ -60,7 +108,7 @@
 	    		<li> On the Navigation bar, click Upload to go back to start page, or Download to see a list of all the files that you can download.  </li>
             </ol>
     	</div>
-    </div>
+    </div>-->
       {% block content %}
       {%  endblock %}
 <script>
