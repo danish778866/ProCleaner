@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="item col-sm-12"> 
+      Total Number of Non-Missing Values: {{n_values}} <br>
+      {{message}}
+      <ol>
+        <li> Number of missing values: {{n_missing}}</li>
+        <li> % of missing values: {{pervasiveness_missing}}</li>
+        <li> Missing values caught in the dataset: {{type_missing_values_caught}}</li>
+      
+      <div id="hist-two"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+{% endblock %}
