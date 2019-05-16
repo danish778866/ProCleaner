@@ -1,96 +1,51 @@
 body {
-  background-color: #6d695c;
   background-color: azure;
-      font: 20px Montserrat, sans-serif;
-      line-height: 1.8;
-/*background-image:
-repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
-linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
-background-size: 70px 120px;*/
-
+  font: 20px Montserrat, sans-serif;
+  line-height: 1.8;
 }
 
 .container {
   background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
-    border-radius: 2%;
-    font-size: 15px;
+  border-radius: 2%;
+  font-size: 15px;
+  box-shadow: 10px 10px 5px grey;
+  padding-bottom: 10px;
 }
 
 .navbar {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border: 0;
-    border-radius: 0;
-    margin-bottom: 0;
-    font-size: 12px;
-    letter-spacing: 5px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 5px;
 }
 .navbar-nav  li a:hover {
-    color: #1abc9c !important;
+  color: #1abc9c !important;
 }
-
-/*body, html{
-  height: 100%;
-  background-color: #6d695c;
-      font: 20px Montserrat, sans-serif;
-background-image:
-repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
-linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
-background-size: 70px 120px;
-}
-
-.container {
-  background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
-    font-size: 100%;
-    font-family: inherit;
-}
-
-.navbar {
-    font-size: 100%;
-    font-family: inherit;
-}
-.navbar-nav  li a:hover {
-    color: #fff !important;
-}*/
 
 .item {
-    border-radius: 25px;
-    background: #fff;
-    border-top-style: solid;
-    border-top-width: thin;
-    margin-bottom: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+  border-radius: 25px;
+  background: #fff;
+  border-top-style: solid;
+  border-top-width: thin;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .itemhead {
-    text-align: center;
-    margin: 0px;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    background-color: cadetblue;
-    margin-bottom: 10px;
+  text-align: center;
+  margin: 0px;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background-color: cadetblue;
+  margin-bottom: 10px;
 }
 
-.itemhead h4 {
-        display: inline;
-}
-
-.itemdrop {
-    float: right;
-    font-size: 36px;
-}
-
-.itemdrop:hover {
+.helpicon:hover {
     cursor: pointer;
 }
-
-
-tr { cursor: default; }
-.highlight { background: yellow; }
 
 .control {
   font-size: 18px;

@@ -103,8 +103,9 @@ def list(request):
             url=post_url,
             headers=header
         )
-        for r in list_response.json():
-            cdrive_files.append(r['file_name'])
+        if list_response.status_code == requests.codes.ok:
+            for r in list_response.json():
+                cdrive_files.append(r['file_name'])
     # Load documents for the list page
     all_documents = Document.objects.all()
     # Render list page with the documents and the form
