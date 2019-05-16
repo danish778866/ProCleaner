@@ -3,29 +3,174 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="item col-sm-12"> 
-    Total Number of Values: {{total_values}} <br>
-    (Below % out of total number of values)
-      <ol>Checking for missing values:
-        <li> Number of missing values: {{n_missing}}</li>
-        <li> % of missing values: {{pervasiveness_missing}}</li>
-        <li> Missing values caught in the dataset: {{type_missing_values_caught}}</li>
-      </ol>
-    Total Number of Non-Missing Values: {{n_values}}  <br>
-    (Below % out of number of non-missing values)
-      <ol>Checking for duplicates:
-        <li> Number of uniques: {{n_uniques}}</li>
-        <li> % of uniques: {{ pervasiveness_uniques }}</li>
-        <li> Some duplicates: {{duplicates}} </li>
-      </ol>
-      
-      <ol> Checking for type of values (Pervasiveness in %):
-        {% for key, value in type_pervasiveness_dict.items %} 
-          <li> {{key}} - {{value}}</li>
-        {% endfor %}
-      </ol>
+    <div class="col-md-12" style="text-align: center;">
+      <div style="display: inline-block;">
+        <div class="well">
+          Total Number of Values: {{total_values}}
+        </div>
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#missing">
+          Missing Values
+        </button>
+        <div id="missing" class="collapse">
+          <br>
+          Note: Pervasiveness (in %) out of total number of values
+          <br><br>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Missing Data</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped table-hover ">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="info">
+                    <td>1</td>
+                    <td>Missing Values Detected</td>
+                    <td>{{type_missing_values_caught}}</td>
+                  </tr>
+                  <tr class="info">
+                    <td>2</td>
+                    <td>Number of Missing Values</td>
+                    <td>{{n_missing}}</td>
+                  </tr>
+                  <tr class="info">
+                    <td>3</td>
+                    <td>%(out of Total Values) of Missing Values</td>
+                    <td>{{pervasiveness_missing}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  <div class="row"><br><br></div>
+  <div class="row">
+    <div class="col-md-12" style="text-align: center;">
+      <div style="display: inline-block;">
+        <div class="well">
+          Total Number of Non-Missing Values: {{n_values}}
+        </div>
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#errors">
+          Pervasiveness of certain characteristics
+        </button>
+        <div id="errors" class="collapse">
+          <br>
+          Note: Pervasiveness (in %) out of number of non-missing values
+          <br>
+          <br>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Duplicates</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table table-striped table-hover ">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="info">
+                        <td>1</td>
+                        <td>Some Duplicates Detected</td>
+                        <td>{{duplicates}}</td>
+                      </tr>
+                      <tr class="info">
+                        <td>2</td>
+                        <td>Number of Unique Strings</td>
+                        <td>{{n_uniques}}</td>
+                      </tr>
+                      <tr class="info">
+                        <td>3</td>
+                        <td>Pervasiveness of Uniques</td>
+                        <td>{{pervasiveness_uniques}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Type of Strings</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table table-striped table-hover ">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key, value in type_pervasiveness_dict.items %}
+                      {% if forloop.counter > 12 %}
+                      <tr class="info">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{key}}</td>
+                        <td>{{value}}</td>
+                      </tr>
+                      {% elif forloop.counter > 9 %}
+                      <tr class="success">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{key}}</td>
+                        <td>{{value}}</td>
+                      </tr>
+                      {% elif forloop.counter > 6 %}
+                      <tr class="info">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{key}}</td>
+                        <td>{{value}}</td>
+                      </tr>
+                      {% elif forloop.counter > 3 %}
+                      <tr class="success">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{key}}</td>
+                        <td>{{value}}</td>
+                      </tr>
+                      {% else %}
+                      <tr class="info">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{key}}</td>
+                        <td>{{value}}</td>
+                      </tr>
+                      {% endif %}
+
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="item col-sm-12">
+
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 {% block script %}
@@ -34,9 +179,9 @@
 //console.log(data['lengths']);
 //var x = {{ lengths }}
 //var trace = {
-//    x: x,
-//    type: 'histogram',
-//  };
+// x: x,
+// type: 'histogram',
+// };
 //var data = [trace];
 //Plotly.newPlot('hist-one', data)
 {% endblock %}
