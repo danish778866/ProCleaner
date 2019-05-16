@@ -3,60 +3,30 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="item col-sm-4 col-sm-offset-4">         
-<form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
-{% csrf_token %}
-<p>Please select one of the following options:</p>
-{% for option in profiler_options %}
-<label class="control control--radio">{{ option.1 }}
-  <input type="radio" name="profiler_choice" value="{{ option.0 }}">
-  <div class="control__indicator"></div>
-</label>
-{% endfor %}
-<div class="col-sm-12 text-center">
-<button type="submit" value="Submit" class="btn btn-success">Execute</button>
-</div>
-</form>
+    <div class="itemhead col-sm-12 text-center">
+      <h3>String Profiling and Cleaning Options
+        <i class="helpicon fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
+      </h3>
     </div>
   </div>
+  <form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <div class="item col-sm-4 col-sm-offset-4">         
+        <h4>Please select one of the following options:</h4>
+        {% for option in profiler_options %}
+          <label class="control control--radio">{{ option.1 }}
+            <input type="radio" name="profiler_choice" value="{{ option.0 }}">
+            <div class="control__indicator"></div>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <button type="submit" value="Submit" class="btn btn-success">Execute</button>
+      </div>
+    </div>
+  </form>
 </div>
-{% endblock %}
-{% block script %}
-$(function() {
-
-    /* Get all rows from your 'table' but not the first one 
-     * that includes headers. */
-    var rows = $('tr').not(':first');
-
-    /* Create 'click' event handler for rows */
-    rows.on('click', function(e) {
-
-        /* Get current row */
-        var row = $(this);
-
-        /* Check if 'Ctrl', 'cmd' or 'Shift' keyboard key was pressed
-         * 'Ctrl' => is represented by 'e.ctrlKey' or 'e.metaKey'
-         * 'Shift' => is represented by 'e.shiftKey' */
-        if ((e.ctrlKey || e.metaKey) || e.shiftKey) {
-            /* If pressed highlight the other row that was clicked */
-            row.addClass('highlight');
-        } else {
-            /* Otherwise just highlight one row and clean others */
-            rows.removeClass('highlight');
-            row.addClass('highlight');
-        }
-
-    });
-
-    /* This 'event' is used just to avoid that the table text 
-     * gets selected (just for styling). 
-     * For example, when pressing 'Shift' keyboard key and clicking 
-     * (without this 'event') the text of the 'table' will be selected.
-     * You can remove it if you want, I just tested this in 
-     * Chrome v30.0.1599.69 */
-    $(document).bind('selectstart dragstart', function(e) { 
-        e.preventDefault(); return false; 
-    });
-
-});
 {% endblock %}

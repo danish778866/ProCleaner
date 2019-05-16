@@ -7,58 +7,60 @@
   <!-- <link rel="stylesheet" href="{% static 'css/show_page.css' %}"> -->
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
   <body>
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
-        </div>
-        <div class="modal-body">
-    		This tool allows you to clean files containing strings. <br>
-    		Assumption: A line in the file is treated as one string. <br>
-    		<br>
-    		Please follow the below steps:
-    		<ol>
-                <li> <b>Choose a file</b> and click Submit.
-           			<ul>
-           				<li>No files uploaded yet? Choose a file to upload, and click Submit. </li>
-	    				<li> Already uploaded files earlier? Select a file from the list, and click Submit.			  </li>
-	    			</ul>
-	    		</li>
-	    		<li> <b>Pick action</b>, and click Execute.		  </li>
-          <li> If chose to clean strings:   
-            <ul>
-    	    		<li> <b>Check the correct label(s)</b> out of the candidate match pairs, and click Clean Up.		  </li>
-    	    		<li> <b>Download</b> the cleaned file, and the rules used for the clean operation.  </li>
-            </ul>
-          </li>
-          <li> If chose to profile:   
-            <ul>
-              <li> <b>Profiling Statistics</b> will be shown regarding string lengths and the words containing them.      </li>
-            </ul>
-          </li>
-          <li> If chose to find errors:   
-            <ul>
-              <li> Different kinds of possible <b>errors</b> alongwith their pervasiveness will be shown.      </li>
-            </ul>
-          </li>
-	    		<li> On the Navigation bar, click Upload to go back to start page, or Download to see a list of all the files that you can download.  </li>
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+    		    This tool allows you to clean files containing strings. <br>
+    		    Assumption: A line in the file is treated as one string. <br>
+    		    <br>
+    		    Please follow the below steps:
+    		    <ol>
+              <li> <b>Choose a file</b> and click Submit.
+             	  <ul>
+             		  <li>No files uploaded yet? Choose a file to upload, and click Submit.</li>
+	    		  		  <li> Already uploaded files earlier? Select a file from the list, and click Submit.</li>
+	    		  	  </ul>
+	    		    </li>
+	    		    <li><b>Pick action</b>, and click Execute.</li>
+              <li> If chose to clean strings:   
+                <ul>
+    	      		  <li> <b>Check the correct label(s)</b> out of the candidate match pairs, and click Clean Up.</li>
+    	      		  <li> <b>Download</b> the cleaned file, and the rules used for the clean operation.</li>
+                </ul>
+              </li>
+              <li> If chose to profile:   
+                <ul>
+                  <li> <b>Profiling Statistics</b> will be shown regarding string lengths and the words containing them.</li>
+                </ul>
+              </li>
+              <li> If chose to find errors:   
+                <ul>
+                  <li> Different kinds of possible <b>errors</b> alongwith their pervasiveness will be shown.</li>
+                </ul>
+              </li>
+	    		    <li> On the Navigation bar, click Upload to go back to start page, or Download to see a list of all the files that you can download.</li>
             </ol>
-    </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
-
     </div>
+<<<<<<< HEAD
   </div>
-	    <nav class="navbar navbar-inverse">
+	    <!-- <nav class="navbar navbar-inverse">
 	      <div class="container-fluid">
 	        <div class="navbar-header">
 	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -67,63 +69,47 @@
 	            <span class="icon-bar"></span>                        
 	          </button>
 	          <!-- a class="navbar-brand" href="#">Home</a-->
-	        </div>
+	        <!-- </div>
 	        <div class="collapse navbar-collapse" id="myNavbar">
 	          <ul class="nav navbar-nav">
 	            <li class="active"><a href="/myapp/list">Home</a></li>
 	            <li><a href="/myapp/downloads">Downloads</a></li>
 	          </ul>
-	        </div>
+	        </div> -->
+=======
+    <nav class="navbar navbar-inverse">
+	    <div class="container-fluid">
+	      <div class="navbar-header">
+	        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>                        
+	        </button>
+	        <a class="navbar-brand" href="#">ProCleaner</a-->
+>>>>>>> 9e2eb08ee12bd74d80f14b2772a169644f9b026f
 	      </div>
-	    </nav>
-    <!--<div class = "container">
-    	<div id = "header_custom">
-    		This tool allows you to clean files containing strings. <br>
-    		Assumption: A line in the file is treated as one string. <br>
-    		<br>
-    		Please follow the below steps:
-    		<ol>
-                <li> <b>Choose a file</b> and click Submit.
-           			<ul>
-           				<li>No files uploaded yet? Choose a file to upload, and click Submit. </li>
-	    				<li> Already uploaded files earlier? Select a file from the list, and click Submit.			  </li>
-	    			</ul>
-	    		</li>
-	    		<li> <b>Pick action</b>, and click Execute.		  </li>
-          <li> If chose to clean strings:   
-            <ul>
-    	    		<li> <b>Check the correct label(s)</b> out of the candidate match pairs, and click Clean Up.		  </li>
-    	    		<li> <b>Download</b> the cleaned file, and the rules used for the clean operation.  </li>
-            </ul>
-          </li>
-          <li> If chose to profile:   
-            <ul>
-              <li> <b>Profiling Statistics</b> will be shown regarding string lengths and the words containing them.      </li>
-            </ul>
-          </li>
-          <li> If chose to find errors:   
-            <ul>
-              <li> Different kinds of possible <b>errors</b> alongwith their pervasiveness will be shown.      </li>
-            </ul>
-          </li>
-	    		<li> On the Navigation bar, click Upload to go back to start page, or Download to see a list of all the files that you can download.  </li>
-            </ol>
-    	</div>
-    </div>-->
-      {% block content %}
-      {%  endblock %}
-<script>
-$( document ).ready(function() {
-    $('a').each(function(){
-        if ($(this).prop('href') == window.location.href) {
+	      <div class="collapse navbar-collapse" id="myNavbar">
+	        <ul class="nav navbar-nav">
+	          <li class="active"><a href="/myapp/list">Home</a></li>
+	          <li><a href="/myapp/downloads">Download</a></li>
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    {% block content %}
+    {%  endblock %}
+    <script>
+      $( document ).ready(function() {
+        $('a').each(function(){
+          if ($(this).prop('href') == window.location.href) {
             $(this).parents('li').addClass('active');
-	} else {
+	        } else {
             $(this).parents('li').removeClass('active');
-	}
-    });
-});
-{% block script %}
-{%  endblock %}
-</script>
-    </body>
+	        }
+        });
+      });
+      {% block script %}
+      {%  endblock %}
+    </script>
+  </body>
 </html> 

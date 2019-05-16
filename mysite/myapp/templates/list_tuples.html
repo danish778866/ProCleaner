@@ -3,19 +3,20 @@
 {% block content %}
 <div class="container">
   <div class="row">
-            <div class="itemhead col-sm-12">
-                <h4>Tuple Samples</h4>
-                <i class="itemdrop fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
-            </div>
+    <div class="itemhead col-sm-12 text-center">
+      <h3>Tuple Samples
+        <i class="helpicon fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
+      </h3>
+    </div>
   </div>
   <div class="row">
     <div class="item col-sm-4 col-sm-offset-4">
         <table class="table table-dark table-bordered">
           <tbody>
             {% for t in sample_tuples %}
-            <tr>
-              <td>{{ t }}</td>
-            </tr>
+              <tr>
+                <td>{{ t }}</td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>

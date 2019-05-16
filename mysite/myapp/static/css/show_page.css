@@ -1,290 +1,51 @@
-/*body {
-      background-color: #fff;
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-}*/
-
-body, html{
-  height: 100%;
-  background-color: #6d695c;
-background-image:
-repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 60px),
-linear-gradient(60deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
-linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
-background-size: 70px 120px;
-	font-family: 'Lato', sans-serif;
+body {
+  background-color: azure;
+  font: 20px Montserrat, sans-serif;
+  line-height: 1.8;
 }
 
 /* .container {
   background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
-    font-size: 100%;
-    font-family: inherit;
+  border-radius: 2%;
+  font-size: 15px;
+  box-shadow: 10px 10px 5px grey;
+  padding-bottom: 10px;
 } */
 
 .navbar {
-    font-size: 100%;
-    font-family: inherit;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 5px;
 }
 .navbar-nav  li a:hover {
-    color: #fff !important;
-}
-
-#header_custom {
-    font-size: 100%;
-    font-family: inherit;
-}
-
-.report {
-    background-color: #fff;
-}
-
-.code {
-    background-color: #fff;
+  color: #1abc9c !important;
 }
 
 .item {
-    border-radius: 25px;
-    background: #fff;
-    border-top-style: solid;
-    border-top-width: thin;
-    margin-bottom: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+  border-radius: 25px;
+  background: #fff;
+  border-top-style: solid;
+  border-top-width: thin;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .itemhead {
-    text-align: center;
-    margin: 0px;
-    font-family: "Comic Sans MS", cursive, sans-serif;
+  text-align: center;
+  margin: 0px;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background-color: cadetblue;
+  margin-bottom: 10px;
 }
 
-.itemhead h4 {
-        display: inline;
-}
-
-.itemdrop {
-    float: right;
-    font-size: 36px;
-}
-
-.itemdrop:hover {
+.helpicon:hover {
     cursor: pointer;
 }
-
-
-tr { cursor: default; }
-.highlight { background: yellow; }
-
-.buttonDownload {
-	display: inline-block;
-	position: relative;
-	padding: 10px 25px;
-  background-color: #D2B48C;
-  margin: 2px;
-	text-decoration: none;
-	font-size: 0.9em;
-	text-align: center;
-	text-indent: 15px;
-}
-
-.buttonDownload:hover {
-	background-color: #333;
-	color: white;
-}
-
-.buttonDownload:before, .buttonDownload:after {
-	content: ' ';
-	display: block;
-	position: absolute;
-	left: 15px;
-	top: 52%;
-}
-
-/* Download box shape  */
-.buttonDownload:before {
-	width: 10px;
-	height: 2px;
-	border-style: solid;
-	border-width: 0 2px 2px;
-}
-
-/* Download arrow shape */
-.buttonDownload:after {
-	width: 0;
-	height: 0;
-	margin-left: 3px;
-	margin-top: -7px;
-
-	border-style: solid;
-	border-width: 4px 4px 0 4px;
-	border-color: transparent;
-	border-top-color: inherit;
-
-	animation: downloadArrow 2s linear infinite;
-	animation-play-state: paused;
-}
-
-.buttonDownload:hover:before {
-	border-color: #4CC713;
-}
-
-.buttonDownload:hover:after {
-	border-top-color: #4CC713;
-	animation-play-state: running;
-}
-
-/* keyframes for the download icon anim */
-@keyframes downloadArrow {
-	/* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
-	0% {
-		margin-top: -7px;
-		opacity: 1;
-	}
-
-	0.001% {
-		margin-top: -15px;
-		opacity: 0;
-	}
-
-	50% {
-		opacity: 1;
-	}
-
-	100% {
-		margin-top: 0;
-		opacity: 0;
-	}
-}
-
-/*.radio {
- 
-     display: block;
-    position: relative;
-    padding-left: 30px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 20px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none
-}
-
-.radio input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.checkround {
-
-    position: absolute;
-    top: 6px;
-    left: 0;
-    height: 20px;
-    width: 20px;
-    background-color: #fff ;
-    border-color:#3498db;
-    border-style:solid;
-    border-width:2px;
-     border-radius: 50%;
-}
-
-
-.radio input:checked ~ .checkround {
-    background-color: #fff;
-}
-
-.checkround:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-.radio input:checked ~ .checkround:after {
-    display: block;
-}
-
-.radio .checkround:after {
-     left: 2px;
-    top: 2px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background:#3498db;
-    
- 
-}
-
-.check {
-    display: block;
-    position: relative;
-    padding-left: 25px;
-    margin-bottom: 12px;
-    padding-right: 15px;
-    cursor: pointer;
-    font-size: 18px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.check input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.checkmark {
-    position: absolute;
-    top: 3px;
-    left: 0;
-    height: 18px;
-    width: 18px;
-    background-color: #fff ;
-    border-color:#f8204f;
-    border-style:solid;
-    border-width:2px;
-}
-
-
-
-.check input:checked ~ .checkmark {
-    background-color: #fff  ;
-}
-
-.checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-.check input:checked ~ .checkmark:after {
-    display: block;
-}
-
-.check .checkmark:after {
-    left: 5px;
-    top: 1px;
-    width: 5px;
-    height: 10px;
-    border: solid ;
-    border-color:#f8204f;
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
-}
-
-.cust-btn{
-	margin-bottom: 10px;
-	background-color: #f8204f;
-	border-width: 2px;
-	border-color: #f8204f;
-	color: #fff;
-}*/
 
 .control {
   font-size: 18px;
@@ -369,4 +130,18 @@ tr { cursor: default; }
 
 .control--radio input:disabled ~ .control__indicator:after {
   background: #7b7b7b;
+}
+
+.download-btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.download-btn:hover {
+  background-color: RoyalBlue;
 }
