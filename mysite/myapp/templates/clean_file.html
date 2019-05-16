@@ -3,9 +3,25 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="item col-sm-4 col-sm-offset-4">
-      Download the cleaned file: <a href="{% static 'pdf/'|add:clean_file_name %}" class="buttonDownload">Clean File</a> <br>
+    <div class="itemhead col-sm-12 text-center">
+      <h3>Download file locally or upload to CDrive
+        <i class="itemdrop fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
+      </h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="item col-sm-4 col-sm-offset-4 text-center">
+      <h4>Download the cleaned file</h4>
+      <button class="download-btn"><i class="fa fa-download"></i> Download</button>
     </div>
   </div>
 </div>
+{% endblock %}
+{% block script %}
+$(document).ready(function() {
+  $('.download-btn').click(function(e) {
+    e.preventDefault();  //stop the browser from following
+    window.location.href = "{% static 'pdf/'|add:clean_file_name %}";
+  });
+});
 {% endblock %}

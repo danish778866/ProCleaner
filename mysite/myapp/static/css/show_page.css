@@ -57,6 +57,8 @@ background-size: 70px 120px;
     text-align: center;
     margin: 0px;
     font-family: "Comic Sans MS", cursive, sans-serif;
+    background-color: cadetblue;
+    margin-bottom: 10px;
 }
 
 .itemhead h4 {
@@ -369,4 +371,18 @@ tr { cursor: default; }
 
 .control--radio input:disabled ~ .control__indicator:after {
   background: #7b7b7b;
+}
+
+.download-btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.download-btn:hover {
+  background-color: RoyalBlue;
 }

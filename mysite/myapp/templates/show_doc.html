@@ -2,75 +2,82 @@
 {% load staticfiles %}
 {% block content %}
 <div class="container">
-      <form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
   <div class="row">
-      Number of candidate pairs: {{ num_pairs }} <br>
-      Please select the correct label out of the candidate pairs: <br>        
-      {% csrf_token %}
-    <div class="col-sm-4">
-    <div class="item col-sm-12">
-        <table class="table table-dark table-bordered">
-          <tbody>
-            {% for s in similar_strings_1 %}
-            <tr>
-              <td>
-              <label class="control control--checkbox">
-                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
-                <div class="control__indicator"></div>
-              <label>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-    </div>
-    <div class="col-sm-4">
-    <div class="item col-sm-12">
-        <table class="table table-dark table-bordered">
-          <tbody>
-            {% for s in similar_strings_2 %}
-            <tr>
-              <td>
-              <label class="control control--checkbox">
-                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
-                <div class="control__indicator"></div>
-              <label>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-    </div>
-    <div class="col-sm-4">
-    <div class="item col-sm-12">
-        <table class="table table-dark table-bordered">
-          <tbody>
-            {% for s in similar_strings_3 %}
-            <tr>
-              <td>
-              <label class="control control--checkbox">
-                <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
-                <div class="control__indicator"></div>
-              <label>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
+    <div class="itemhead col-sm-12 text-center">
+      <h3>Clean Strings by Merging
+        <i class="itemdrop fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
+      </h3>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-12 text-center">
-      <button type="submit" value="Clean Up" class="btn btn-primary">Clean Up</button>
-      <button type="button" value="Merge" id="mergebtn" class="btn btn-info">Merge</button>
-      <button type="button" value="Done" id="donebtn" class="btn btn-success">Done</button>
+  <form action="{% url 'show_doc' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <!--Number of candidate pairs: {{ num_pairs }} <br>
+        Please select the correct label out of the candidate pairs: <br>-->
+      <div class="col-sm-4">
+        <div class="item col-sm-12">
+          <table class="table table-dark table-bordered">
+            <tbody>
+              {% for s in similar_strings_1 %}
+                <tr>
+                  <td>
+                    <label class="control control--checkbox">
+                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                      <div class="control__indicator"></div>
+                    <label>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="item col-sm-12">
+          <table class="table table-dark table-bordered">
+            <tbody>
+              {% for s in similar_strings_2 %}
+                <tr>
+                  <td>
+                    <label class="control control--checkbox">
+                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                      <div class="control__indicator"></div>
+                    <label>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="item col-sm-12">
+          <table class="table table-dark table-bordered">
+            <tbody>
+              {% for s in similar_strings_3 %}
+                <tr>
+                  <td>
+                    <label class="control control--checkbox">
+                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                      <div class="control__indicator"></div>
+                    <label>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <button type="submit" value="Clean Up" class="btn btn-primary">Clean Up</button>
+        <button type="button" value="Merge" id="mergebtn" class="btn btn-info">Merge</button>
+        <button type="button" value="Done" id="donebtn" class="btn btn-success">Done</button>
         <input id="mergeval" type="hidden" name="merge" value="" />
+      </div>
     </div>
-  </div>
-      </form>
+  </form>
 </div>
 {% endblock %}
 {% block script %}

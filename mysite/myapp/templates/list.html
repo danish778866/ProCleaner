@@ -2,38 +2,63 @@
 {% load staticfiles %}
 {% block content %}
 <div class="container">
-            <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+  <div class="row">
+    <div class="itemhead col-sm-12 text-center">
+      <h3>Select or Upload File
+        <i class="itemdrop fa fa-question-circle" style="font-size: 24px;" data-toggle="modal" data-target="#myModal"></i>
+      </h3>
+    </div>
+  </div>
+  <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="row">
-         <div class="item col-sm-8 col-sm-offset-2">
-            Existing Documents to choose from (Select one or more):
-                {% csrf_token %}
-            {% if all_documents %}
-                <ul>
-                {% for document in all_documents %}
-                    <li>
-                      <a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a>
-                      <input style="display:inline;" type="checkbox" name="process_file" value="{{ document.docfile.url }}" />
-                    </li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>No documents.</p>
-                {% endif %}
-                <p>{{ form.non_field_errors }}</p>
-                <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-                <p>
-                    {{ form.docfile.errors }}
-                    {{ form.docfile }}
-                </p>
-    </div>
+      <div class="item col-sm-8 col-sm-offset-2">
+        <h4 class="text-center">Select an existing file or upload from Local</h4>
+        {% csrf_token %}
+        {% if all_documents %}
+          <ul>
+            {% for document in all_documents %}
+              <label style="font-weight: normal; font-size: 14px;" class="control control--radio">{{ document.docfile.name }}
+                <input type="radio" name="process_file" value="{{ document.docfile.url }}">
+                <div class="control__indicator"></div>
+              </label>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No documents.</p>
+        {% endif %}
+        
+        <p>{{ form.non_field_errors }}</p>
+        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+        <p>
+          {{ form.docfile.errors }}
+          {{ form.docfile }}
+        </p>
+      </div>
     </div>
     <div class="row">
-         <div class="col-sm-12 text-center">
-            <button type="submit" value="Upload" class="btn btn-success">Upload</button>
+      <div class="item col-sm-4 col-sm-offset-4 text-center">
+        <h1>OR</h1>
+      </div>
     </div>
+    <div class="row">
+      <div class="item col-sm-8 col-sm-offset-2 text-center">
+        <h4>Select a file from CDrive</h4>
+        <select id="select-cdrive-file" name="cdrive_file">
+          <option></option>
+          {% for cdrive_file in cdrive_files %}
+            <option value="{{ cdrive_file }}">{{ cdrive_file }}</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
-            </form>
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <button type="submit" value="Upload" class="btn btn-success">Upload</button>
+      </div>
     </div>
+  </form>
+</div>
 {% endblock %}
 {% block script %}
 function getUrlVars() {
@@ -45,7 +70,8 @@ function getUrlVars() {
     return vars;
 }
 $( document ).ready(function() {
-  if(typeof $.cookie('procleaner_token') === 'undefined') {
+  $('#select-cdrive-file').select2();
+  /*if(typeof $.cookie('procleaner_token') === 'undefined') {
     current_url = window.location.href;
     console.log(current_url);
     if(current_url.endsWith("/list/")) {
@@ -72,6 +98,6 @@ $( document ).ready(function() {
     }
   } else{
     console.log("Its there!");
-  }
+  }*/
 });
 {% endblock %}
