@@ -177,37 +177,13 @@ def list_tuples(request):
 
 
 def clean_file(request):
-    #ret_val = ""
-    #checks = request.POST.getlist('clean')
-    #substitute = {}
-    #uploaded_file_name = request.session.get('uploaded_file_path')
-    #project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    #rules_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".rules"
-    #rules_file = open(rules_file_path, "w")
-    #for substitution in checks:
-    #    words = substitution.split(",")
-    #    ret_val = ret_val + words[1] + " "
-    #    substitute[words[1]] = words[0]
-    #    rules_file.write(words[1] + "->" + words[0] + "\n")
-    #rules_file.close()
-    #uploaded_file_path = project_dir + uploaded_file_name
-    #cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
-    #A = pd.read_csv(uploaded_file_path)
-    #new_foo = []
-    #for index, row in A.iterrows():
-    #    if row['foo'] in substitute:
-    #        #A.set_value(index, 'foo', substitute[row['foo']])
-    #        new_foo.append(substitute[row['foo']])
-    #    else:
-    #        new_foo.append(row['foo'])
-    #A['new_foo'] = new_foo
-    #column_order = ['id','foo','new_foo']
-    #A[column_order].to_csv(cleaned_file_path, index=False)
-    #return render(request, 'clean_file.html', {'cleaned_file_name': os.path.basename(uploaded_file_name) + 
-    #                                           ".clean", 'rules_file_name': os.path.basename(uploaded_file_name) + ".rules"})
     uploaded_file_name = request.session.get('uploaded_file_path')
+    if request.session["file_type"] == "CDrive":
+        uploaded_file_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + "cdrive_files" + os.sep \
+                + uploaded_file_name
+    else:
+        uploaded_file_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + uploaded_file_name
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    uploaded_file_path = project_dir + uploaded_file_name
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
     A = pd.read_csv(uploaded_file_path)
     A.to_csv(cleaned_file_path, index=False)
