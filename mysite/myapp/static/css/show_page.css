@@ -4,15 +4,15 @@ body {
   line-height: 1.8;
 }
 
-/* .container {
+.container {
   background: url("https://s22.postimg.cc/gzyyouldd/grey-paper-texture.jpg") center top;
   border-radius: 2%;
   font-size: 15px;
   box-shadow: 10px 10px 5px grey;
   padding-bottom: 10px;
-} */
+}
 
-.navbar {
+/* .navbar {
   padding-top: 15px;
   padding-bottom: 15px;
   border: 0;
@@ -23,7 +23,7 @@ body {
 }
 .navbar-nav  li a:hover {
   color: #1abc9c !important;
-}
+} */
 
 .item {
   border-radius: 25px;
