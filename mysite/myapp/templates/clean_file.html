@@ -15,6 +15,13 @@
       <button class="download-btn"><i class="fa fa-download"></i> Download</button>
     </div>
   </div>
+  <div class="row">
+    <div class="item col-sm-4 col-sm-offset-4 text-center">
+      <h4>Upload the cleaned file to CDrive</h4>
+      <button type="submit" id="upload-button" class="btn btn-success">Upload</button>
+      <div id="upload-message"></div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block script %}
@@ -22,6 +29,24 @@ $(document).ready(function() {
   $('.download-btn').click(function(e) {
     e.preventDefault();  //stop the browser from following
     window.location.href = "{% static 'pdf/'|add:clean_file_name %}";
+  });
+  $("#upload-button").click(function(e){
+    e.preventDefault();
+    $("#upload-message").html("Uploading...");
+    $("#upload-message").css("color", "orange");
+    $.ajax({
+      type: "POST",
+      url: '/myapp/clean_file/',
+      dataType: 'json',
+      success: function(data) {
+        $("#upload-message").html("Upload completed!");
+        $("#upload-message").css("color", "green");
+      },
+      error: function (jqXHR, textStatus, errorThrown) { 
+        $("#upload-message").html("Upload failed!");
+        $("#upload-message").css("color", "red");
+      }
+    });
   });
 });
 {% endblock %}

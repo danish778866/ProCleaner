@@ -3,13 +3,15 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 import py_stringsimjoin as ssj
 import py_stringmatching as sm
 import pandas as pd
 import os, sys, json
 import requests
+import pdb
 
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
@@ -62,6 +64,7 @@ def list(request):
     current_url = request.get_full_path()
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     print(project_dir)
+    #pdb.set_trace()
     if "procleaner_token" not in request.session:
         if current_url.endswith("/list/"):
             print(2)
@@ -177,6 +180,7 @@ def list_tuples(request):
         return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
 
 
+@csrf_exempt
 def clean_file(request):
     uploaded_file_name = request.session.get('uploaded_file_path')
     if request.session["file_type"] == "CDrive":
@@ -186,12 +190,30 @@ def clean_file(request):
         uploaded_file_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + uploaded_file_name
     project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
-    A = pd.read_csv(uploaded_file_path)
-    A.to_csv(cleaned_file_path, index=False)
-    return render(request,
-                  'clean_file.html',
-                  {'clean_file_name': os.path.basename(uploaded_file_name) + ".clean"}
-                 )
+    if request.method == "POST":
+        files = {'file': open(cleaned_file_path, 'rb')}
+        cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
+        post_url = cdrive_url + "/upload/"
+        token = request.session["procleaner_token"]
+        header = {"Authorization": "Bearer " + token}
+        try:
+            r = requests.post(post_url, files=files, headers=header)
+            django_response = HttpResponse(
+                content=r.content,
+                status=r.status_code,
+                content_type=r.headers['Content-Type']
+            )
+        except:
+            django_response = HttpResponseBadRequest
+        return django_response
+    else:
+        A = pd.read_csv(uploaded_file_path)
+        A.to_csv(cleaned_file_path, index=False)
+        return render(request,
+                      'clean_file.html',
+                      {'clean_file_name': os.path.basename(uploaded_file_name) + ".clean",
+                       'clean_file_path': cleaned_file_path}
+                     )
 
 
 def show_doc(request):
