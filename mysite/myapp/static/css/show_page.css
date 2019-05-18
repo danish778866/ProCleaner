@@ -1,4 +1,4 @@
-body {
+/* body {
   background-color: azure;
   font: 20px Montserrat, sans-serif;
   line-height: 1.8;
@@ -142,26 +142,6 @@ body {
 }
 
 /* Darker background on mouse-over */
-.download-btn:hover {
+/*.download-btn:hover {
   background-color: RoyalBlue;
-}
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-}
+} */
