@@ -9,31 +9,13 @@
       </h3>
     </div>
   </div>
-  <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
     <div class="row">
-      <div class="item col-sm-8 col-sm-offset-2">
-        <h4 class="text-center">Select an existing file or upload from Local</h4>
-        {% csrf_token %}
-        {% if all_documents %}
-          <ul>
-            {% for document in all_documents %}
-              <label style="font-weight: normal; font-size: 14px;" class="control control--radio">{{ document.docfile.name }}
-                <input type="radio" name="process_file" value="{{ document.docfile.url }}">
-                <div class="control__indicator"></div>
-              </label>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>No documents.</p>
-        {% endif %}
-        
-        <p>{{ form.non_field_errors }}</p>
-        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-        <p>
-          {{ form.docfile.errors }}
-          {{ form.docfile }}
-        </p>
+      <div class="item col-sm-8 col-sm-offset-2 text-center">
+        <h4>Upload a File</h4>
+        <label class="btn btn-primary btn-file">
+          Browse <input type="file" name="docfile" id="upload-file" style="display: none;">
+        </label>
+        <div id="uploaded-file"></div>
       </div>
     </div>
     <div class="row">
@@ -54,50 +36,127 @@
     </div>
     <div class="row">
       <div class="col-sm-12 text-center">
-        <button type="submit" value="Upload" class="btn btn-success">Upload</button>
+        <button id="upload-button" type="submit" value="Upload" class="btn btn-primary">Upload</button>
+        <button type="button" value="Confirm" id="confirmbtn" class="btn btn-success">Confirm</button>
+        <div id="upload-message"></div>
       </div>
     </div>
-  </form>
+  <div id="sample-tuples" class="row">
+    <div class="item col-sm-4 col-sm-offset-4 text-center">
+        <h4>Sample Tuples</h4>
+        <table class="table table-dark table-bordered">
+          <tbody>
+            {% for t in sample_tuples %}
+              <tr>
+                <td>{{ t }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block script %}
-function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-    console.log(vars);
-    return vars;
+function validateUpload(localFile, cdriveFile) {
+  retVal = [];
+  uploads = [];
+  upload_type = ""
+  upload_status = ""
+  message = ""
+  if(localFile != undefined) {
+    uploads.push(localFile);
+    upload_type = "Local";
+  }
+  if(cdriveFile != '') {
+    uploads.push(cdriveFile);
+    upload_type = "CDrive";
+  }
+  if(uploads.length == 0) {
+    upload_status = "Error";
+    message = "Please select a file to upload...";
+  } else if(uploads.length == 1) {
+    upload_status = "Success";
+    message = upload_type;
+  } else {
+    upload_status = "Error";
+    message = "Please select only one file to upload...";
+  }
+  retVal.push(upload_status);
+  retVal.push(message);
+  return retVal;
 }
 $( document ).ready(function() {
-  $('#select-cdrive-file').select2();
-  /*if(typeof $.cookie('procleaner_token') === 'undefined') {
-    current_url = window.location.href;
-    console.log(current_url);
-    if(current_url.endsWith("/list/")) {
-      window.location.href = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz";
+  var fileUploaded = false;
+  $("#sample-tuples").hide();
+  $("#upload-button").click(function() {
+    var localFile = $("#upload-file")[0].files[0];
+    var cdriveFile = $("#select-cdrive-file").children("option:selected").val();
+    console.log(cdriveFile);
+    console.log(localFile);
+    retVal = []
+    retVal = validateUpload(localFile, cdriveFile);
+    if(retVal[0] == "Error") {
+      $("#upload-message").html(retVal[1]);
+      $("#upload-message").css("color", "red");
     } else {
-      vars = getUrlVars();
-      var data = {
-        "grant_type": "authorization_code",
-        "code": vars["code"],
-        "redirect_uri": "http://0.0.0.0:8000/myapp/list/",
-        "client_id": "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3",
-        "client_secret": "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n"
-      };
-      token_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/token/";
+      $("#upload-message").html("Uploading...");
+      $("#upload-message").css("color", "orange");
+      var uploadType = retVal[1];
+      var actionurl = "{% url 'list_tuples' %}";
+      var form = $("#upload-form");
+      var formData = new FormData();
+      if(uploadType == "Local") {
+        var file = $("#upload-file")[0].files[0];
+        formData.append('docfile', file);
+      } else{
+        formData.append('cdrive_file', cdriveFile);  
+      }
+      formData.append('upload_type', uploadType);
       $.ajax({
-        type: "POST",
-        url: token_url,
-        data: data,
-        success: function(data, status) {
+        url: actionurl,
+        type: 'POST',
+        dataType: 'json',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
           console.log(data);
-          $.cookie("procleaner_token", data["access_token"], {expires: data["expires_in"]});
+          tableHtml = "";
+          data["sample_tuples"].forEach(createTableRow);
+          function createTableRow(value, index, array) {
+            tableHtml = tableHtml + "<tr><td>" + value + "</td></tr>";
+          }
+          console.log(tableHtml);
+          $("#sample-tuples div table tbody").html(tableHtml);
+          $("#sample-tuples").show();
+          $("#upload-message").html("Upload completed!");
+          $("#upload-message").css("color", "green");
+          fileUploaded = true;
         }
-      });
+      });  
     }
-  } else{
-    console.log("Its there!");
-  }*/
+  });
+$("#confirmbtn").click(function(){
+  if(fileUploaded) {
+    document.location.href = "{% url 'profiler_choice' %}";
+  } else {
+    $("#upload-message").html("Please upload a file first...");
+    $("#upload-message").css("color", "red");
+  }
+});
+});
+$(document).on('change', ':file', function() {
+    var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [numFiles, label]);
+});
+$(document).ready( function() {
+    $(':file').on('fileselect', function(event, numFiles, label) {
+        console.log(numFiles);
+        console.log(label);
+        $("#uploaded-file").html(label);
+    });
 });
 {% endblock %}
