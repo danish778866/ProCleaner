@@ -31,6 +31,15 @@ CLEAN_FILES_CDRIVE = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT
 CLEAN_FILES_SUFFIX = ".clean"
 
 def upload(request):
+    """Return a HttpResponse object for rendering the /myapp/upload page
+    
+    This view performs the following operations:
+        1. Create a form consisting of an input field for a user to upload a file.
+        2. Get the OAuth token for the user from authentication (if it doesn't
+           exist).
+        3. Get the list of files in current users' CDrive.
+        4. Render the form and CDrive files.
+    """
     form = DocumentForm()
     current_url = request.get_full_path()
     if CLIENT_TOKEN_KEY not in request.session:
