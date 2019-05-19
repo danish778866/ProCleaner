@@ -69,64 +69,54 @@ def upload(request):
         {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files}
     )
 
+def sample(request):
+    upload_type = ""
+    if 'existing_file' in request.POST:
+        upload_type = "Existing"
+    elif 'cdrive_file' in request.POST:
+        upload_type = "CDrive"
+    elif 'docfile' in request.FILES:
+        upload_type = "Local"
+    if upload_type == "CDrive":
+        cdrive_file = request.POST.getlist('cdrive_file')[0]
+        token = request.session[CLIENT_TOKEN_KEY]
+        get_url = CDRIVE_URL + "/file-content?file_name=" + str(cdrive_file)
+        header = {"Authorization": "Bearer " + token}
+        read_response = requests.get(url=get_url, headers=header)
+        tuples = read_response.json().split("\n")
+        uploaded_df = pd.DataFrame(tuples)
+        uploaded_df.columns = ['foo']
+        uploaded_df['id'] = range(0, len(uploaded_df))
+        column_order = ['id', 'foo']
+        uploaded_df[column_order].to_csv(os.path.join(CDRIVE_FILES_DIR, cdrive_file), index=False)
+        sample_tuples = tuples[1:10]
+        request.session['uploaded_file'] = cdrive_file
+        request.session['file_type'] = "CDrive"
+    elif upload_type == "Local":
+        uploaded_doc = Document(docfile=request.FILES['docfile'])
+        uploaded_doc.save()
+        uploaded_doc_path = os.path.join(PROJECT_DIR, uploaded_doc.docfile.url)
+        uploaded_df = pd.read_csv(uploaded_doc_path, names=['foo'])
+        uploaded_df['id'] = range(0, len(uploaded_df))
+        column_order = ['id', 'foo']
+        whitespace_striper = lambda x: str(x).strip()
+        uploaded_df['foo'] = uploaded_df['foo'].apply(whitespace_striper)
+        uploaded_df[column_order].to_csv(uploaded_doc_path, index=False)
+        request.session['uploaded_file'] = uploaded_doc.docfile.url
+        request.session['file_type'] = "Local"
+        sample_tuples = uploaded_df['foo'].head().tolist()
+    elif upload_type == "Existing":
+        exiting_file = request.POST.getlist('existing_file')
+        request.session['uploaded_file'] = existing_file[0]
+        request.session['file_type'] = "Existing"
+        uploaded_file_path = os.path.join(PROJECT_DIR, existing_file[0])
+        uploaded_df = pd.read_csv(uploaded_doc_path, names=['foo'])
+        sample_tuples = uploaded_df['foo'].head().tolist()
+    return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
+
 def choices(request):
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
     return render(request, 'profiler_choice.html', {'profiler_options': profiler_options})
-
-def list_tuples(request):
-    form = DocumentForm(request.POST, request.FILES)
-    load_from_cdrive = False
-    if 'process_file' in request.POST:
-        load_from_cdrive = False
-        process_file = request.POST.getlist('process_file')
-    elif 'cdrive_file' in request.POST:
-        load_from_cdrive = True
-
-    if form.is_valid():
-        print(request.POST)
-        if load_from_cdrive:
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            cdrive_file_dir = project_dir + os.sep + "cdrive_files"
-            cdrive_file = request.POST.getlist('cdrive_file')[0]
-            cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
-            token = request.session["procleaner_token"]
-            print(request.COOKIES)
-            print(token)
-            get_url = cdrive_url + "/file-content?file_name=" + str(cdrive_file)
-            header = {"Authorization": "Bearer " + token}
-            read_response = requests.get(url=get_url, headers=header)
-            tuples = read_response.json().split("\n")
-            A = pd.DataFrame(tuples)
-            A.columns = ['foo']
-            A['id'] = range(0, len(A))
-            column_order = ['id', 'foo']
-            A[column_order].to_csv(os.path.join(cdrive_file_dir, cdrive_file), index=False)
-            sample_tuples = tuples[1:10]
-            request.session['uploaded_file_path'] = cdrive_file
-            request.session['file_type'] = "CDrive"
-        elif 'docfile' in request.FILES:
-            newdoc = Document(docfile=request.FILES['docfile'])
-            newdoc.save()
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            table_path = project_dir + newdoc.docfile.url
-            A = pd.read_csv(table_path, names=['foo'])
-            A['id'] = range(0, len(A))
-            column_order = ['id', 'foo']
-            whitespace_striper = lambda x: str(x).strip()
-            A['foo'] = A['foo'].apply(whitespace_striper)
-            A[column_order].to_csv(table_path, index=False)
-            request.session['uploaded_file_path'] = newdoc.docfile.url
-            request.session['file_type'] = "Local"
-            sample_tuples = A['foo'].head().tolist()
-        else:
-            request.session['uploaded_file_path'] = process_file[0]
-            request.session['file_type'] = "Local"
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            table_path = project_dir + process_file[0]
-            A = pd.read_csv(table_path, names=['foo'])
-            sample_tuples = A['foo'].head().tolist()
-        return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
-
 
 @csrf_exempt
 def clean_file(request):

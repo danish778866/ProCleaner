@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from myapp.views import upload, show_doc, choices, clean_file, downloads_page, list_tuples
+from myapp.views import upload, show_doc, choices, clean_file, downloads_page, sample
 
 urlpatterns = [
     url(r'^list/$', upload, name='upload'),
@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^choices/$', choices, name='choices'),
     url(r'^clean_file/$', clean_file, name='clean_file'),
     url(r'^downloads/$', downloads_page, name='downloads_page'),
-    url(r'^list_tuples/$', list_tuples, name='list_tuples'),
+    url(r'^sample/$', sample, name='sample'),
 ]
