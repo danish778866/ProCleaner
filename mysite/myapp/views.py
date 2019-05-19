@@ -69,11 +69,9 @@ def upload(request):
         {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files}
     )
 
-def profiler_choice(request):
-    form = ProfilerChoiceForm()
+def choices(request):
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
-    uploaded_file_name = request.session.get('uploaded_file_path')
-    return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
+    return render(request, 'profiler_choice.html', {'profiler_options': profiler_options})
 
 def list_tuples(request):
     form = DocumentForm(request.POST, request.FILES)
