@@ -16,91 +16,44 @@ import pdb
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
 
-def downloads_page(request):
-    project_dir = os.path.dirname(os.path.realpath(__file__))
-    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
-    all_documents = Document.objects.all()
-    docs_to_show = []
-    for document in all_documents:
-        doc_to_show = {}
-        file_url = document.docfile.url
-        file_name = os.path.basename(file_url)
-        doc_to_show['file'] = True
-        doc_to_show['file_name'] = file_name
-        doc_to_show['file_url'] = file_url
-        rules_file_path = processed_dir + os.sep + file_name + ".rules"
-        if os.path.exists(rules_file_path):
-            rules_file = True
-            rules_file_name = file_name + ".rules"
-            rules_file_url = rules_file_path
-        else:
-            rules_file = False
-            rules_file_name = ""
-            rules_file_url = ""
-        doc_to_show['rules_file'] = rules_file
-        doc_to_show['rules_file_name'] = rules_file_name
-        doc_to_show['rules_file_url'] = rules_file_url
-        clean_file_path = processed_dir + os.sep + file_name + ".clean"
-        print(clean_file_path)
-        if os.path.exists(clean_file_path):
-            print("Hah")
-            clean_file = True
-            clean_file_name = file_name + ".clean"
-            clean_file_url = clean_file_path
-        else:
-            print("Nah")
-            clean_file = False
-            clean_file_name = ""
-            clean_file_url = ""
-        doc_to_show['clean_file'] = clean_file
-        doc_to_show['clean_file_name'] = clean_file_name
-        doc_to_show['clean_file_url'] = clean_file_url
-        docs_to_show.append(doc_to_show)
-        print(docs_to_show)
-    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
+REDIRECT_URI = "http://0.0.0.0:8000/myapp/list/"
+APP_ID = "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3"
+APP_SECRET = "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n"
+TOKEN_URL = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/token/"
+AUTH_URL = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz"
+CDRIVE_URL = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
+CLIENT_TOKEN_KEY = "procleaner_token"
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+CDRIVE_FILES_DIR = os.path.join(PROJECT_DIR, "cdrive_files")
+CLEAN_FILES_LOCAL = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT_DIR, "myapp"), "static"), "pdf"), "clean_local")
+CLEAN_FILES_CDRIVE = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT_DIR, "myapp"), "static"), "pdf"), "clean_cdrive")
+CLEAN_FILES_SUFFIX = ".clean"
 
-def list(request):
-    form = DocumentForm()  # A empty, unbound form
+def upload(request):
+    form = DocumentForm()
     current_url = request.get_full_path()
-    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    print(project_dir)
-    #pdb.set_trace()
-    if "procleaner_token" not in request.session:
+    if CLIENT_TOKEN_KEY not in request.session:
         if current_url.endswith("/list/"):
-            print(2)
-            print("See" + str(request.session.get("procleaner_token", "Loool")))
-            authorize_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz";
-            return HttpResponseRedirect(authorize_url)
+            return HttpResponseRedirect(AUTH_URL)
         else:
-            print(3)
-            print("See" + str(request.session.get("procleaner_token", "Loool")))
             code = request.GET.get('code')
             data = {
                 "grant_type": "authorization_code",
                 "code": code,
-                "redirect_uri": "http://0.0.0.0:8000/myapp/list/",
-                "client_id": "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3",
-                "client_secret": "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n",
+                "redirect_uri": REDIRECT_URI,
+                "client_id": APP_ID,
+                "client_secret": APP_SECRET,
             }
-            token_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/token/"
             response = requests.post(
-                url=token_url,
+                url=TOKEN_URL,
                 data=data
             )
-            request.session["procleaner_token"] = response.json()['access_token']
-            print("Token " + str(response.json()['access_token']))
+            request.session[CLIENT_TOKEN_KEY] = response.json()['access_token']
             request.session.set_expiry(response.json()['expires_in'])
-    else:
-        print(4)
-        print("See" + str(request.session.get("procleaner_token", "Loool")))
-    cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
-    token = request.session.get("procleaner_token")
+    token = request.session.get(CLIENT_TOKEN_KEY)
     cdrive_files = []
-    print(request.COOKIES)
-    print(token)
     if not token is None:
-        #request.session["procleaner_token"] = token
-        post_url = cdrive_url + "/list/"
+        post_url = CDRIVE_URL + "/list/"
         header = {"Authorization": "Bearer " + token}
         list_response = requests.get(
             url=post_url,
@@ -109,10 +62,7 @@ def list(request):
         if list_response.status_code == requests.codes.ok:
             for r in list_response.json():
                 cdrive_files.append(r['file_name'])
-    # Load documents for the list page
     all_documents = Document.objects.all()
-    # Render list page with the documents and the form
-    #request.session.flush()
     return render(
         request,
         'list.html',
@@ -345,6 +295,50 @@ def show_doc(request):
                     'type_missing_values_caught': type_missing_values_caught,
                     'type_pervasiveness_dict': type_pervasiveness_dict
                     })
+
+
+def downloads_page(request):
+    project_dir = os.path.dirname(os.path.realpath(__file__))
+    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
+    all_documents = Document.objects.all()
+    docs_to_show = []
+    for document in all_documents:
+        doc_to_show = {}
+        file_url = document.docfile.url
+        file_name = os.path.basename(file_url)
+        doc_to_show['file'] = True
+        doc_to_show['file_name'] = file_name
+        doc_to_show['file_url'] = file_url
+        rules_file_path = processed_dir + os.sep + file_name + ".rules"
+        if os.path.exists(rules_file_path):
+            rules_file = True
+            rules_file_name = file_name + ".rules"
+            rules_file_url = rules_file_path
+        else:
+            rules_file = False
+            rules_file_name = ""
+            rules_file_url = ""
+        doc_to_show['rules_file'] = rules_file
+        doc_to_show['rules_file_name'] = rules_file_name
+        doc_to_show['rules_file_url'] = rules_file_url
+        clean_file_path = processed_dir + os.sep + file_name + ".clean"
+        print(clean_file_path)
+        if os.path.exists(clean_file_path):
+            print("Hah")
+            clean_file = True
+            clean_file_name = file_name + ".clean"
+            clean_file_url = clean_file_path
+        else:
+            print("Nah")
+            clean_file = False
+            clean_file_name = ""
+            clean_file_url = ""
+        doc_to_show['clean_file'] = clean_file
+        doc_to_show['clean_file_name'] = clean_file_name
+        doc_to_show['clean_file_url'] = clean_file_url
+        docs_to_show.append(doc_to_show)
+        print(docs_to_show)
+    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
 
 
 def stats_length_strings(df, col_name) :
