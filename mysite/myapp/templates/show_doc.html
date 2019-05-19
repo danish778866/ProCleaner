@@ -20,9 +20,9 @@
             <tbody>
               {% for s in similar_strings_1 %}
                 <tr>
-                  <td>
-                    <label class="control control--checkbox">
-                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                  <td style="padding:0px;">
+                    <label style="font-weight:normal; height:100%; width:100%;" class="control control--checkbox">
+                      <input style="display:inline; height:0.1px; width:0.1px;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
                       <div class="control__indicator"></div>
                     <label>
                   </td>
@@ -38,9 +38,9 @@
             <tbody>
               {% for s in similar_strings_2 %}
                 <tr>
-                  <td>
-                    <label class="control control--checkbox">
-                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                  <td style="padding:0px;">
+                    <label style="font-weight:normal; height:100%; width:100%;" class="control control--checkbox">
+                      <input style="display:inline; height:0.1px; width:0.1px;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
                       <div class="control__indicator"></div>
                     <label>
                   </td>
@@ -56,9 +56,9 @@
             <tbody>
               {% for s in similar_strings_3 %}
                 <tr>
-                  <td>
-                    <label class="control control--checkbox">
-                      <input style="display:inline;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
+                  <td style="padding:0px;">
+                    <label style="font-weight:normal; height:100%; width:100%;" class="control control--checkbox">
+                      <input style="display:inline; height:0.1px; width:0.1px;" type="checkbox" name="clean" value="{{ s }}" />{{ s }}
                       <div class="control__indicator"></div>
                     <label>
                   </td>
@@ -81,11 +81,19 @@
 </div>
 {% endblock %}
 {% block script %}
+$(".control").click(function() {
+  if($(this).children('input[type="checkbox"]').is(':checked')) {
+    $(this).parent().css("background-color", "orange");
+  } else {
+    $(this).parent().css("background-color", "white");
+  }
+});
 $("#mergebtn").click(function(){
   var current_merge = []
   var retain_val = ""
   $.each($("input[name='clean']:checked"), function() {
     current_string = $(this).val();
+    $(this).parent().parent().css("background-color", "white");
     if (retain_val.length < current_string.length) {
       retain_val = current_string;                                                   
     }
