@@ -2,40 +2,219 @@
 {% load staticfiles %}
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="item col-sm-12"> 
-    Total Number of Values: {{total_values}} <br>
-    (Below % out of total number of values)
-      <ol>Checking for missing values:
-        <li> Number of missing values: {{n_missing}}</li>
-        <li> % of missing values: {{pervasiveness_missing}}</li>
-        <li> Missing values caught in the dataset: {{type_missing_values_caught}}</li>
-      </ol>
-      <br>
-    Total Number of Non-Missing Values: {{n_values}}  <br>
-    Below Statistics only on non-missing values: <br>
-      <ol>Statistics on string lengths: 
-      	<li>Minimum String Length: {{ stats.0 }}</li>
-      	<li>Max String Length: {{ stats.1 }}</li>
-      	<li>Mean String Length: {{ stats.2 }}</li>
-      	<li>Standard Deviation in String Lengths: {{ stats.3 }}</li>
-      	<li>Median String Length: {{ stats.4 }}</li>
-      </ol>
-      <div id="hist-one"></div>
-    </div>
-    <div class="item col-sm-12"> 
-      <ol>Statistics on words in each string: 
-      	<li>Total number of words across all strings: {{ stats_words.0 }}</li>
-      	<li>Number of words, in string containing least number of words: {{ stats_words.1 }}</li>
-      	<li>Number of words, in string containing maximum number of words: {{ stats_words.2 }}</li>
-      	<li>Mean number of words: {{ stats_words.3 }}</li>
-      	<li>Standard Deviation: {{ stats_words.4 }}</li>
-      	<li>Median number of words: {{ stats_words.5 }}</li>
-      	<li>Number of words beginning with capital letter: {{ num_capitals }} </li>
-      </ol>
-      <div id="hist-two"></div>
+  <div class="page-header" id="banner">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>
+          Statistics
+          <i class="helpicon fa fa-question-circle" style="font-size: 24px;" data-toggle="modal"
+            data-target="#myModal"></i>
+        </h1>
+        <p class="lead">
+          <li><b>Missing Data: </b>Detected missing strings, and their pervasiveness</li>
+          <li><b>String Lengths: </b> Statistics on length of strings, across the data</li>
+          <li><b>Number of Words in each string: </b> Statistics on number of words present in each string, across the
+            data</li>
+          </ol>
+        </p>
+      </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well bs-component">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#missing" data-toggle="tab" aria-expanded="true">Missing Data</a></li>
+          <li class=""><a href="#strlen" data-toggle="tab" aria-expanded="false">String Lengths</a></li>
+          <li class=""><a href="#nwords" data-toggle="tab" aria-expanded="false">Number of Words per String</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade active in" id="missing">
+            <div class="row">
+              <div class="col-md-12">
+
+                <br>
+                <div class="well well-sm">
+                  Total Number of Strings: {{total_values}}
+                </div>
+                <table class="table table-striped table-hover text-center ">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th class="text-center">Statistics on Missing Data, calculated out of all (missing and
+                        non-missing) data</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Missing Values Detected</td>
+                      <td>{{type_missing_values_caught}}</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Number of Missing Values</td>
+                      <td>{{n_missing}}</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>% of Missing Values (out of Total Values)</td>
+                      <td>{{pervasiveness_missing}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="strlen">
+            <div class="row">
+              <div class="col-md-4">
+                <br>
+                <div class="well well-sm">
+                  Total Number of Non-Missing Strings: {{n_values}}
+                </div>
+                <br>
+                <center><h6>Statistics on String Lengths, calculated out of non-missing strings only</h6></center>
+                <table class="table table-striped table-hover text-center">
+                  <!-- <thead>
+                    <tr>
+
+                      <th></th>
+                      <th class="text-center">Statistics on String Lengths, calculated out of non-missing strings only
+                      </th>
+                      <th></th>
+                    </tr>
+                  </thead> -->
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Minimum String Length</td>
+                      <td>{{ stats.0 }}</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Maximum String Length</td>
+                      <td>{{ stats.1 }}</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>Mean String Length</td>
+                      <td>{{ stats.2 }}</td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>Standard Deviation in String Lengths</td>
+                      <td>{{ stats.3 }}</td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>Median String Length</td>
+                      <td>{{ stats.4 }}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+
+              </div>
+              <div class="col-md-8">
+                  <br>
+                  <center>
+                    <div id="hist-one"></div>
+                  </center>
+                </div>
+            </div>
+            <div class="row">
+              
+            </div>
+          </div>
+          <div class="tab-pane fade" id="nwords">
+            <div class="row">
+              <div class="col-md-4">
+                <br>
+                <div class="well well-sm">
+                  Total Number of Non-Missing Strings: {{n_values}}
+                </div>
+                <br>
+                <center><h6>Statistics on Words across Strings, calculated out of non-missing strings only</h6></center>
+                <table class="table table-striped table-hover text-center">
+                  <!-- <thead>
+                    <tr>
+
+                      <th></th>
+                      <th class="text-center">Statistics on Words across Strings, calculated out of non-missing strings
+                        only</th>
+                      <th></th>
+                    </tr>
+                  </thead> -->
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Total number of words across all strings</td>
+                      <td>{{ stats_words.0 }}</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Number of words, in string containing least number of words</td>
+                      <td>{{ stats_words.1 }}</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>Number of words, in string containing maximum number of words</td>
+                      <td>{{ stats_words.2 }}</td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>Mean of number of words in each string</td>
+                      <td>{{ stats_words.3 }}</td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>Standard Deviation of number of words in each string</td>
+                      <td>{{ stats_words.4 }}</td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>Median of number of words in each string</td>
+                      <td>{{ stats_words.5 }}</td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td>Number of words beginning with a capital letter</td>
+                      <td>{{ num_capitals }}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+
+              </div>
+              <div class="col-md-8">
+                  <br>
+                  <center>
+                  <div id="hist-two"></div>
+                </center>
+                </div>
+            </div>
+            <div class="row">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-12">
+        <button type="button" value="backChoice" id="backtoprofilerchoicebtn" class="btn btn-default">Back to
+          Choices</button>
+        <button type="button" value="backUpload" id="backtouploadbtn" class="btn btn-default">Back to Upload Page</button>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+          <br>
+        </div>
+      </div>
 </div>
 {% endblock %}
 {% block script %}
@@ -44,17 +223,114 @@
 //console.log(data['lengths']);
 var x = {{ lengths }}
 var trace = {
-    x: x,
-    type: 'histogram',
-  };
+  x: x,
+  type: 'histogram',
+  marker: {
+      line: {
+        width: 1
+      }
+  },
+opacity: 0.75,
+autobinx: false,
+ xbins: {
+ size: 1
+ }
+};
 var data = [trace];
-Plotly.newPlot('hist-one', data)
+var layout = {
+bargap: 0.05,
+bargroupgap: 0.2,
+title: "Histogram for String Lengths",
+xaxis: {title: "String Length"},
+yaxis: {title: "Count"}
+};
+//Plotly.newPlot('myDiv', data, layout);
+Plotly.newPlot('hist-one', data, layout);
 
 var x_words = {{ lengths_words }}
 var trace_words = {
-    x: x_words,
-    type: 'histogram',
-  };
+x: x_words,
+type: 'histogram',
+marker: {
+    line: {
+      width: 1
+    }
+},
+opacity: 0.75,
+autobinx: false,
+xbins: {
+size: 1
+}
+};
 var data_words = [trace_words];
-Plotly.newPlot('hist-two', data_words)
+var layout_words = {
+  bargap: 0.05,
+  bargroupgap: 0.2,
+  title: "Histogram for Number of Words in a String",
+  xaxis: {title: "x = No. of Words in a String"},
+  yaxis: {title: "No. of Strings containing x Words"}
+  };
+Plotly.newPlot('hist-two', data_words, layout_words)
+
+
+$("#backtoprofilerchoicebtn").click(function(){
+  document.location.href = "{% url 'profiler_choice' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+  document.location.href = "{% url 'list' %}";
+  });
 {% endblock %}
+
+
+// var trace1 = {
+// x: x1,
+// y: y1,
+// name: 'control',
+// autobinx: false,
+// histnorm: "count",
+// marker: {
+// color: "rgba(255, 100, 102, 0.7)",
+// line: {
+// color: "rgba(255, 100, 102, 1)",
+// width: 1
+// }
+// },
+// opacity: 0.5,
+// type: "histogram",
+// xbins: {
+// end: 2.8,
+// size: 0.06,
+// start: .5
+// }
+// };
+// var trace2 = {
+// x: x2,
+// y: y2,
+// autobinx: false,
+// marker: {
+// color: "rgba(100, 200, 102, 0.7)",
+// line: {
+// color: "rgba(100, 200, 102, 1)",
+// width: 1
+// }
+// },
+// name: "experimental",
+// opacity: 0.75,
+// type: "histogram",
+// xbins: {
+// end: 4,
+// size: 0.06,
+// start: -3.2
+
+// }
+// };
+// var data = [trace1, trace2];
+// var layout = {
+// bargap: 0.05,
+// bargroupgap: 0.2,
+// barmode: "overlay",
+// title: "Sampled Results",
+// xaxis: {title: "Value"},
+// yaxis: {title: "Count"}
+// };
+// Plotly.newPlot('myDiv', data, layout);

@@ -13,6 +13,7 @@
         <p class="lead">Choose from amongst the three options</p>
       </div>
     </div>
+  </div>
 
     <div class="row">
       <div class="col-md-4">
@@ -47,9 +48,10 @@
                     {% if all_documents %}
                     {% for document in all_documents %}
                     <div class="radio">
-                      <label>
+                      <label class="control control--radio">
                         <input type="radio" name="process_file" value="{{ document.docfile.url }}" checked="">
-                        {{ document.docfile.name }}
+                        &nbsp;  {{ document.docfile.name }}
+                        <div class="control__indicator"></div>
                       </label>
                     </div>
                     {% endfor %}

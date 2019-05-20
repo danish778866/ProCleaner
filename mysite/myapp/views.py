@@ -176,7 +176,7 @@ def list_tuples(request):
             project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
             table_path = project_dir + process_file[0]
             A = pd.read_csv(table_path, names=['foo'])
-            sample_tuples = A['foo'].head().tolist()
+            sample_tuples = A['foo'].head(10).tolist()
         return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
 
 
@@ -267,7 +267,7 @@ def show_doc(request):
                             similar_strings.append(row['l_foo'])
                         if row['r_foo'] not in similar_strings:
                             similar_strings.append(row['r_foo'])
-                        if len(similar_strings) >= 90:
+                        if len(similar_strings) >= 21:
                             break
             num_pairs = len(similar_pairs)
             similar_strings.sort()
