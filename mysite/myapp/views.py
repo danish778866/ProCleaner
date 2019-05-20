@@ -106,7 +106,7 @@ def sample(request):
     elif upload_type == "Local":
         uploaded_doc = Document(docfile=request.FILES['docfile'])
         uploaded_doc.save()
-        uploaded_doc_path = os.path.join(PROJECT_DIR, uploaded_doc.docfile.url)
+        uploaded_doc_path = os.path.join(PROJECT_DIR, uploaded_doc.docfile.url[1:])
         uploaded_df = pd.read_csv(uploaded_doc_path, names=['foo'])
         uploaded_df['id'] = range(0, len(uploaded_df))
         column_order = ['id', 'foo']
@@ -239,7 +239,7 @@ def show_doc(request):
                            'num_pairs': num_pairs,
                            'similar_strings_1': similar_strings_1,
                            'similar_strings_2': similar_strings_2,
-                           'similar_strings_3': similar_strings_3
+                           'similar_strings_3': similar_strings_3,
                           })
         else:
             column_name = 'foo'
