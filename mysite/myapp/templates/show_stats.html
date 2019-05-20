@@ -274,10 +274,10 @@ Plotly.newPlot('hist-two', data_words, layout_words)
 
 
 $("#backtoprofilerchoicebtn").click(function(){
-  document.location.href = "{% url 'profiler_choice' %}";
+  document.location.href = "{% url 'choices' %}";
   });
   $("#backtouploadbtn").click(function(){
-  document.location.href = "{% url 'list' %}";
+  document.location.href = "{% url 'upload' %}";
   });
 {% endblock %}
 

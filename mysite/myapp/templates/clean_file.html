@@ -28,7 +28,7 @@
 $(document).ready(function() {
   $('.download-btn').click(function(e) {
     e.preventDefault();  //stop the browser from following
-    window.location.href = "{% static 'pdf/'|add:clean_file_name %}";
+    window.location.href = "{% static 'pdf/clean/'|add:clean_file_name %}";
   });
   $("#upload-button").click(function(e){
     e.preventDefault();
@@ -36,7 +36,7 @@ $(document).ready(function() {
     $("#upload-message").css("color", "orange");
     $.ajax({
       type: "POST",
-      url: '/myapp/clean_file/',
+      url: '/myapp/upload_cdrive/',
       dataType: 'json',
       success: function(data) {
         $("#upload-message").html("Upload completed!");

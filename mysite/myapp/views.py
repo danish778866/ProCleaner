@@ -16,91 +16,55 @@ import pdb
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
 
-def downloads_page(request):
-    project_dir = os.path.dirname(os.path.realpath(__file__))
-    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
-    all_documents = Document.objects.all()
-    docs_to_show = []
-    for document in all_documents:
-        doc_to_show = {}
-        file_url = document.docfile.url
-        file_name = os.path.basename(file_url)
-        doc_to_show['file'] = True
-        doc_to_show['file_name'] = file_name
-        doc_to_show['file_url'] = file_url
-        rules_file_path = processed_dir + os.sep + file_name + ".rules"
-        if os.path.exists(rules_file_path):
-            rules_file = True
-            rules_file_name = file_name + ".rules"
-            rules_file_url = rules_file_path
-        else:
-            rules_file = False
-            rules_file_name = ""
-            rules_file_url = ""
-        doc_to_show['rules_file'] = rules_file
-        doc_to_show['rules_file_name'] = rules_file_name
-        doc_to_show['rules_file_url'] = rules_file_url
-        clean_file_path = processed_dir + os.sep + file_name + ".clean"
-        print(clean_file_path)
-        if os.path.exists(clean_file_path):
-            print("Hah")
-            clean_file = True
-            clean_file_name = file_name + ".clean"
-            clean_file_url = clean_file_path
-        else:
-            print("Nah")
-            clean_file = False
-            clean_file_name = ""
-            clean_file_url = ""
-        doc_to_show['clean_file'] = clean_file
-        doc_to_show['clean_file_name'] = clean_file_name
-        doc_to_show['clean_file_url'] = clean_file_url
-        docs_to_show.append(doc_to_show)
-        print(docs_to_show)
-    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
 
-def list(request):
-    form = DocumentForm()  # A empty, unbound form
+REDIRECT_URI = "http://0.0.0.0:8000/myapp/list/"
+APP_ID = "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3"
+APP_SECRET = "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n"
+TOKEN_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/token/"
+AUTH_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz"
+CDRIVE_URL = "http://acdb13cd77acb11e98ea412ac368fc7a-549133274.us-east-1.elb.amazonaws.com"
+CLIENT_TOKEN_KEY = "procleaner_token"
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+CDRIVE_FILES_DIR = os.path.join(PROJECT_DIR, "cdrive_files")
+CLEAN_FILES = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT_DIR, "myapp"), "static"), "pdf"), "clean")
+CLEAN_FILES_LOCAL = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT_DIR, "myapp"), "static"), "pdf"), "clean_local")
+CLEAN_FILES_CDRIVE = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT_DIR, "myapp"), "static"), "pdf"), "clean_cdrive")
+CLEAN_FILES_SUFFIX = ".clean"
+
+def upload(request):
+    """Return a HttpResponse object for rendering the /myapp/upload page
+    
+    This view performs the following operations:
+        1. Create a form consisting of an input field for a user to upload a file.
+        2. Get the OAuth token for the user from authentication (if it doesn't
+           exist).
+        3. Get the list of files in current users' CDrive.
+        4. Render the form and CDrive files.
+    """
+    form = DocumentForm()
     current_url = request.get_full_path()
-    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    print(project_dir)
-    #pdb.set_trace()
-    if "procleaner_token" not in request.session:
+    if CLIENT_TOKEN_KEY not in request.session:
         if current_url.endswith("/list/"):
-            print(2)
-            print("See" + str(request.session.get("procleaner_token", "Loool")))
-            authorize_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz";
-            return HttpResponseRedirect(authorize_url)
+            return HttpResponseRedirect(AUTH_URL)
         else:
-            print(3)
-            print("See" + str(request.session.get("procleaner_token", "Loool")))
             code = request.GET.get('code')
             data = {
                 "grant_type": "authorization_code",
                 "code": code,
-                "redirect_uri": "http://0.0.0.0:8000/myapp/list/",
-                "client_id": "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3",
-                "client_secret": "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n",
+                "redirect_uri": REDIRECT_URI,
+                "client_id": APP_ID,
+                "client_secret": APP_SECRET,
             }
-            token_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/token/"
             response = requests.post(
-                url=token_url,
+                url=TOKEN_URL,
                 data=data
             )
-            request.session["procleaner_token"] = response.json()['access_token']
-            print("Token " + str(response.json()['access_token']))
+            request.session[CLIENT_TOKEN_KEY] = response.json()['access_token']
             request.session.set_expiry(response.json()['expires_in'])
-    else:
-        print(4)
-        print("See" + str(request.session.get("procleaner_token", "Loool")))
-    cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
-    token = request.session.get("procleaner_token")
+    token = request.session.get(CLIENT_TOKEN_KEY)
     cdrive_files = []
-    print(request.COOKIES)
-    print(token)
     if not token is None:
-        #request.session["procleaner_token"] = token
-        post_url = cdrive_url + "/list/"
+        post_url = CDRIVE_URL + "/list/"
         header = {"Authorization": "Bearer " + token}
         list_response = requests.get(
             url=post_url,
@@ -109,119 +73,113 @@ def list(request):
         if list_response.status_code == requests.codes.ok:
             for r in list_response.json():
                 cdrive_files.append(r['file_name'])
-    # Load documents for the list page
     all_documents = Document.objects.all()
-    # Render list page with the documents and the form
-    #request.session.flush()
     return render(
         request,
         'list.html',
         {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files}
     )
 
-def profiler_choice(request):
-    form = ProfilerChoiceForm()
-    profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
-    uploaded_file_name = request.session.get('uploaded_file_path')
-    return render(request, 'profiler_choice.html', {'form': form, 'profiler_options': profiler_options})
-
-def list_tuples(request):
-    form = DocumentForm(request.POST, request.FILES)
-    load_from_cdrive = False
-    if 'process_file' in request.POST:
-        load_from_cdrive = False
-        process_file = request.POST.getlist('process_file')
+def sample(request):
+    upload_type = ""
+    if 'existing_file' in request.POST:
+        upload_type = "Existing"
     elif 'cdrive_file' in request.POST:
-        load_from_cdrive = True
+        upload_type = "CDrive"
+    elif 'docfile' in request.FILES:
+        upload_type = "Local"
+    if upload_type == "CDrive":
+        cdrive_file = request.POST.getlist('cdrive_file')[0]
+        token = request.session[CLIENT_TOKEN_KEY]
+        get_url = CDRIVE_URL + "/file-content?file_name=" + str(cdrive_file)
+        header = {"Authorization": "Bearer " + token}
+        read_response = requests.get(url=get_url, headers=header)
+        tuples = read_response.json().split("\n")
+        uploaded_df = pd.DataFrame(tuples)
+        uploaded_df.columns = ['foo']
+        uploaded_df['id'] = range(0, len(uploaded_df))
+        column_order = ['id', 'foo']
+        uploaded_df[column_order].to_csv(os.path.join(CDRIVE_FILES_DIR, cdrive_file), index=False)
+        sample_tuples = tuples[1:10]
+        request.session['uploaded_file'] = cdrive_file
+        request.session['file_type'] = "CDrive"
+    elif upload_type == "Local":
+        uploaded_doc = Document(docfile=request.FILES['docfile'])
+        uploaded_doc.save()
+        uploaded_doc_path = os.path.join(PROJECT_DIR, uploaded_doc.docfile.url)
+        uploaded_df = pd.read_csv(uploaded_doc_path, names=['foo'])
+        uploaded_df['id'] = range(0, len(uploaded_df))
+        column_order = ['id', 'foo']
+        whitespace_striper = lambda x: str(x).strip()
+        uploaded_df['foo'] = uploaded_df['foo'].apply(whitespace_striper)
+        uploaded_df[column_order].to_csv(uploaded_doc_path, index=False)
+        request.session['uploaded_file'] = uploaded_doc.docfile.url
+        request.session['file_type'] = "Local"
+        sample_tuples = uploaded_df['foo'].head(10).tolist()
+    elif upload_type == "Existing":
+        existing_file = request.POST.getlist('existing_file')
+        request.session['uploaded_file'] = existing_file[0]
+        request.session['file_type'] = "Existing"
+        # pdb.set_trace()
+        uploaded_file_path = os.path.join(PROJECT_DIR, existing_file[0][1:])
+        uploaded_df = pd.read_csv(uploaded_file_path, names=['foo'])
+        sample_tuples = uploaded_df['foo'].head(10).tolist()
+    return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
 
-    if form.is_valid():
-        print(request.POST)
-        if load_from_cdrive:
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            cdrive_file_dir = project_dir + os.sep + "cdrive_files"
-            cdrive_file = request.POST.getlist('cdrive_file')[0]
-            cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
-            token = request.session["procleaner_token"]
-            print(request.COOKIES)
-            print(token)
-            get_url = cdrive_url + "/file-content?file_name=" + str(cdrive_file)
-            header = {"Authorization": "Bearer " + token}
-            read_response = requests.get(url=get_url, headers=header)
-            tuples = read_response.json().split("\n")
-            A = pd.DataFrame(tuples)
-            A.columns = ['foo']
-            A['id'] = range(0, len(A))
-            column_order = ['id', 'foo']
-            A[column_order].to_csv(os.path.join(cdrive_file_dir, cdrive_file), index=False)
-            sample_tuples = tuples[1:10]
-            request.session['uploaded_file_path'] = cdrive_file
-            request.session['file_type'] = "CDrive"
-        elif 'docfile' in request.FILES:
-            newdoc = Document(docfile=request.FILES['docfile'])
-            newdoc.save()
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            table_path = project_dir + newdoc.docfile.url
-            A = pd.read_csv(table_path, names=['foo'])
-            A['id'] = range(0, len(A))
-            column_order = ['id', 'foo']
-            whitespace_striper = lambda x: str(x).strip()
-            A['foo'] = A['foo'].apply(whitespace_striper)
-            A[column_order].to_csv(table_path, index=False)
-            request.session['uploaded_file_path'] = newdoc.docfile.url
-            request.session['file_type'] = "Local"
-            sample_tuples = A['foo'].head().tolist()
-        else:
-            request.session['uploaded_file_path'] = process_file[0]
-            request.session['file_type'] = "Local"
-            project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            table_path = project_dir + process_file[0]
-            A = pd.read_csv(table_path, names=['foo'])
-            sample_tuples = A['foo'].head(10).tolist()
-        return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
-
+def choices(request):
+    profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
+    return render(request, 'profiler_choice.html', {'profiler_options': profiler_options})
 
 @csrf_exempt
-def clean_file(request):
-    uploaded_file_name = request.session.get('uploaded_file_path')
+def upload_cdrive(request):
+    uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":
-        uploaded_file_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + "cdrive_files" + os.sep \
-                + uploaded_file_name
+        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
     else:
-        uploaded_file_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + uploaded_file_name
-    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    cleaned_file_path = project_dir + os.sep + "myapp" + os.sep + "static" + os.sep + "pdf" + os.sep + os.path.basename(uploaded_file_name) + ".clean"
-    if request.method == "POST":
-        files = {'file': open(cleaned_file_path, 'rb')}
-        cdrive_url = "http://a7648f6f5702911e98ea412ac368fc7a-1169430973.us-east-1.elb.amazonaws.com"
-        post_url = cdrive_url + "/upload/"
-        token = request.session["procleaner_token"]
-        header = {"Authorization": "Bearer " + token}
-        try:
-            r = requests.post(post_url, files=files, headers=header)
-            django_response = HttpResponse(
-                content=r.content,
-                status=r.status_code,
-                content_type=r.headers['Content-Type']
-            )
-        except:
-            django_response = HttpResponseBadRequest
-        return django_response
-    else:
-        A = pd.read_csv(uploaded_file_path)
-        A.to_csv(cleaned_file_path, index=False)
-        return render(request,
-                      'clean_file.html',
-                      {'clean_file_name': os.path.basename(uploaded_file_name) + ".clean",
-                       'clean_file_path': cleaned_file_path}
-                     )
+        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file)
+    clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
+    clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
+    files = {'file': open(clean_file_path, 'rb')}
+    post_url = CDRIVE_URL + "/upload/"
+    token = request.session[CLIENT_TOKEN_KEY]
+    header = {"Authorization": "Bearer " + token}
+    try:
+        upload_response = requests.post(post_url, files=files, headers=header)
+        django_response = HttpResponse(
+            content=upload_response.content,
+            status=upload_response.status_code,
+            content_type=upload_response.headers['Content-Type']
+        )
+    except:
+        django_response = HttpResponseBadRequest
+    return django_response
 
+def download(request):
+    uploaded_file = request.session.get('uploaded_file')
+    if request.session["file_type"] == "CDrive":
+        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
+    else:
+        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
+    clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
+    clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
+    if not os.path.exists(CLEAN_FILES):
+        os.makedirs(CLEAN_FILES)
+    uploaded_df = pd.read_csv(uploaded_file_path)
+    uploaded_df.to_csv(clean_file_path, index=False)
+    return render(request,
+                  'clean_file.html',
+                      {
+                          'clean_file_name': clean_file_name,
+                          'clean_file_path': clean_file_path
+                      }
+                 )
 
 def show_doc(request):
     if request.session["file_type"] == "CDrive":
         project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + "cdrive_files" + os.sep
     else:
         project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    uploaded_file = request.session.get('uploaded_file_path')
+    uploaded_file = request.session.get('uploaded_file')
     print(request.POST)
     if request.method == 'POST':
         if "merge" in request.POST:
@@ -345,6 +303,50 @@ def show_doc(request):
                     'type_missing_values_caught': type_missing_values_caught,
                     'type_pervasiveness_dict': type_pervasiveness_dict
                     })
+
+
+def downloads_page(request):
+    project_dir = os.path.dirname(os.path.realpath(__file__))
+    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
+    all_documents = Document.objects.all()
+    docs_to_show = []
+    for document in all_documents:
+        doc_to_show = {}
+        file_url = document.docfile.url
+        file_name = os.path.basename(file_url)
+        doc_to_show['file'] = True
+        doc_to_show['file_name'] = file_name
+        doc_to_show['file_url'] = file_url
+        rules_file_path = processed_dir + os.sep + file_name + ".rules"
+        if os.path.exists(rules_file_path):
+            rules_file = True
+            rules_file_name = file_name + ".rules"
+            rules_file_url = rules_file_path
+        else:
+            rules_file = False
+            rules_file_name = ""
+            rules_file_url = ""
+        doc_to_show['rules_file'] = rules_file
+        doc_to_show['rules_file_name'] = rules_file_name
+        doc_to_show['rules_file_url'] = rules_file_url
+        clean_file_path = processed_dir + os.sep + file_name + ".clean"
+        print(clean_file_path)
+        if os.path.exists(clean_file_path):
+            print("Hah")
+            clean_file = True
+            clean_file_name = file_name + ".clean"
+            clean_file_url = clean_file_path
+        else:
+            print("Nah")
+            clean_file = False
+            clean_file_name = ""
+            clean_file_url = ""
+        doc_to_show['clean_file'] = clean_file
+        doc_to_show['clean_file_name'] = clean_file_name
+        doc_to_show['clean_file_url'] = clean_file_url
+        docs_to_show.append(doc_to_show)
+        print(docs_to_show)
+    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
 
 
 def stats_length_strings(df, col_name) :

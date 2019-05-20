@@ -159,6 +159,15 @@
 </div>
 {% endblock %}
 {% block script %}
+
+//$(".control").click(function() {
+//  if($(this).children('input[type="checkbox"]').is(':checked')) {
+//    $(this).parent().css("background-color", "orange");
+//  } else {
+//    $(this).parent().css("background-color", "white");
+//  }
+//});
+
 $(".mergebtn").click(function(){
 var current_merge = []
 var retain_val = ""
@@ -189,13 +198,13 @@ if (retain_val.length < current_string.length) { retain_val=current_string; } cu
   console.log(current_merge_val);
   });
   $("#donebtn").click(function(){
-  document.location.href = "{% url 'clean_file' %}";
+  document.location.href = "{% url 'download' %}";
   });
 
   $("#backtoprofilerchoicebtn").click(function(){
-  document.location.href = "{% url 'profiler_choice' %}";
+  document.location.href = "{% url 'choices' %}";
   });
   $("#backtouploadbtn").click(function(){
-  document.location.href = "{% url 'list' %}";
+  document.location.href = "{% url 'upload' %}";
   });
   {% endblock %}

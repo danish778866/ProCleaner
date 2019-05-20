@@ -174,9 +174,9 @@
 {% endblock %}
 {% block script %}
 $("#backtoprofilerchoicebtn").click(function(){
-document.location.href = "{% url 'profiler_choice' %}";
+document.location.href = "{% url 'choices' %}";
 });
 $("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'list' %}";
+document.location.href = "{% url 'upload' %}";
 });
 {% endblock %}

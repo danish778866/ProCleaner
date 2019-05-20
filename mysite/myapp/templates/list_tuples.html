@@ -7,8 +7,6 @@
       <div class="col-md-12">
         <h1>
           Confirm File
-          <i class="helpicon fa fa-question-circle" style="font-size: 24px;" data-toggle="modal"
-            data-target="#myModal"></i>
         </h1>
         <p class="lead">Look at the sample from the file and confirm if this is the intended upload.</p>
       </div>
@@ -42,9 +40,9 @@
 {% endblock %}
 {% block script %}
 $("#confirmbtn").click(function(){
-document.location.href = "{% url 'profiler_choice' %}";
+document.location.href = "{% url 'choices' %}";
 });
 $("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'list' %}";
+document.location.href = "{% url 'upload' %}";
 });
 {% endblock %}

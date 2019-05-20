@@ -37,7 +37,7 @@
       <div class="col-md-12">
         <div id="existing" class="collapse">
           <div class="well bs-component">
-            <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
               {% csrf_token %}
               <fieldset>
                 <legend>Choose from Existing Files </legend>
@@ -49,7 +49,7 @@
                     {% for document in all_documents %}
                     <div class="radio">
                       <label class="control control--radio">
-                        <input type="radio" name="process_file" value="{{ document.docfile.url }}" checked="">
+                        <input type="radio" name="existing_file" value="{{ document.docfile.url }}" checked="">
                         &nbsp;  {{ document.docfile.name }}
                         <div class="control__indicator"></div>
                       </label>
@@ -76,7 +76,7 @@
         </div>
         <div id="uploadLocal" class="collapse">
           <div class="well bs-component">
-            <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
               {% csrf_token %}
               <fieldset>
                 <legend>Upload from Local </legend>
@@ -105,7 +105,7 @@
         </div>
         <div id="uploadCDrive" class="collapse">
           <div class="well bs-component">
-            <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
               {% csrf_token %}
               <fieldset>
                 <legend>Select a file from C Drive</legend>
@@ -148,7 +148,7 @@
             </h3>
           </div>
         </div>
-        <form action="{% url 'list_tuples' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="row">
             <div class="item col-sm-8 col-sm-offset-2">
