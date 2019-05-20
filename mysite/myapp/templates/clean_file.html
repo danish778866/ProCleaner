@@ -16,7 +16,7 @@
   <div class="row">
     <div class="item col-md-12">
       <h5>Download the cleaned file: &nbsp;
-        <button type="button" value="Download" class="btn btn-primary"><i class="fa fa-download"></i> Download</button>
+        <button type="button" id="download-btn" value="Download" class="btn btn-primary"><i class="fa fa-download"></i> Download</button>
       </h5>
     </div>
   </div>
@@ -56,7 +56,7 @@
 {% endblock %}
 {% block script %}
 $(document).ready(function() {
-$('.download-btn').click(function(e) {
+$('#download-btn').click(function(e) {
 e.preventDefault(); //stop the browser from following
 window.location.href = "{% static 'pdf/clean/'|add:clean_file_name %}";
 });
