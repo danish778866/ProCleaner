@@ -162,6 +162,7 @@
       <button type="button" value="backChoice" id="backtoprofilerchoicebtn" class="btn btn-default">Back to
         Choices</button>
       <button type="button" value="backUpload" id="backtouploadbtn" class="btn btn-default">Back to Upload Page</button>
+      <button type="button" value="backCDrive" id="backtoCbtn" class="btn btn-default">Back to C Drive</button>
     </div>
   </div>
   <div class="row">
@@ -179,4 +180,9 @@ document.location.href = "{% url 'choices' %}";
 $("#backtouploadbtn").click(function(){
 document.location.href = "{% url 'upload' %}";
 });
+
+$("#backtoCbtn").click(function(){
+  document.location.href = "{{ c_drive_ui_url }}";
+  });
+
 {% endblock %}

@@ -23,6 +23,7 @@ APP_SECRET = "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTx
 TOKEN_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/token/"
 AUTH_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz"
 CDRIVE_URL = "http://acdb13cd77acb11e98ea412ac368fc7a-549133274.us-east-1.elb.amazonaws.com"
+CDRIVE_UI_URL = "http://a4e6f607c7acd11e98ea412ac368fc7a-425625761.us-east-1.elb.amazonaws.com"
 CLIENT_TOKEN_KEY = "procleaner_token"
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 CDRIVE_FILES_DIR = os.path.join(PROJECT_DIR, "cdrive_files")
@@ -77,7 +78,7 @@ def upload(request):
     return render(
         request,
         'list.html',
-        {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files}
+        {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files, 'c_drive_ui_url': CDRIVE_UI_URL}
     )
 
 def sample(request):
@@ -170,7 +171,8 @@ def download(request):
                   'clean_file.html',
                       {
                           'clean_file_name': clean_file_name,
-                          'clean_file_path': clean_file_path
+                          'clean_file_path': clean_file_path,
+                          'c_drive_ui_url': CDRIVE_UI_URL
                       }
                  )
 
@@ -282,7 +284,8 @@ def show_doc(request):
                     'lengths': lengths,
                     'stats_words': stats_words,
                     'lengths_words': lengths_words,
-                    'num_capitals': num_capitals
+                    'num_capitals': num_capitals,
+                    'c_drive_ui_url': CDRIVE_UI_URL
                     })
             else:
                 # find uniqueness
@@ -301,7 +304,8 @@ def show_doc(request):
                     'n_missing': n_missing,
                     'pervasiveness_missing': pervasiveness_missing,
                     'type_missing_values_caught': type_missing_values_caught,
-                    'type_pervasiveness_dict': type_pervasiveness_dict
+                    'type_pervasiveness_dict': type_pervasiveness_dict,
+                    'c_drive_ui_url': CDRIVE_UI_URL
                     })
 
 
