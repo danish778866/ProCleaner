@@ -83,9 +83,7 @@ def upload(request):
 
 def sample(request):
     upload_type = ""
-    if 'existing_file' in request.POST:
-        upload_type = "Existing"
-    elif 'cdrive_file' in request.POST:
+    if 'cdrive_file' in request.POST:
         upload_type = "CDrive"
     elif 'docfile' in request.FILES:
         upload_type = "Local"
@@ -116,14 +114,6 @@ def sample(request):
         uploaded_df[column_order].to_csv(uploaded_doc_path, index=False)
         request.session['uploaded_file'] = uploaded_doc.docfile.url
         request.session['file_type'] = "Local"
-        sample_tuples = uploaded_df['foo'].head(10).tolist()
-    elif upload_type == "Existing":
-        existing_file = request.POST.getlist('existing_file')
-        request.session['uploaded_file'] = existing_file[0]
-        request.session['file_type'] = "Existing"
-        # pdb.set_trace()
-        uploaded_file_path = os.path.join(PROJECT_DIR, existing_file[0][1:])
-        uploaded_df = pd.read_csv(uploaded_file_path, names=['foo'])
         sample_tuples = uploaded_df['foo'].head(10).tolist()
     return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
 
