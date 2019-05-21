@@ -230,6 +230,9 @@ def show_doc(request):
                         if len(similar_strings) >= 21:
                             break
             num_pairs = len(similar_pairs)
+            show_normalizer = True
+            if num_pairs == 0:
+                show_normalizer = False
             similar_strings.sort()
             num_each = len(similar_strings) / 3
             print(similar_strings)
@@ -242,6 +245,7 @@ def show_doc(request):
                            'similar_strings_1': similar_strings_1,
                            'similar_strings_2': similar_strings_2,
                            'similar_strings_3': similar_strings_3,
+                           'show_normalizer': show_normalizer
                           })
         else:
             column_name = 'foo'

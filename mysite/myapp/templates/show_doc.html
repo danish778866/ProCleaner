@@ -38,6 +38,7 @@
           </h3>
         </div>
       </div> -->
+  {% if show_normalizer %}
   <div class="row">
     <div class="col-md-12">
       <div class="well bs-component">
@@ -144,6 +145,16 @@
       </div>
     </div>
   </div>
+  {% else %}
+  <div class="row">
+    <div class="item col-md-12">
+      <div class="alert alert-dismissible alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Normalizer couldn't find any strings to clean</strong>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <div class="row">
     <div class="col-md-12">
       <button type="button" value="backChoice" id="backtoprofilerchoicebtn" class="btn btn-default">Back to
