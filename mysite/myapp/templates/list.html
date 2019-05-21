@@ -222,52 +222,16 @@
         </form>
       </div> -->
       {% endblock %}
-      {% block script %}
-
-      $("#backtoCbtn").click(function(){
-        document.location.href = "{{ c_drive_ui_url }}";
-        });
-
-
-      function getUrlVars() {
-      var vars = {};
-      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-      vars[key] = value;
-      });
-      console.log(vars);
-      return vars;
-      }
-      $( document ).ready(function() {
-      $('#select-cdrive-file').select2();
-      /*if(typeof $.cookie('procleaner_token') === 'undefined') {
-      current_url = window.location.href;
-      console.log(current_url);
-      if(current_url.endsWith("/list/")) {
-      window.location.href =
-      "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz";
-      } else {
-      vars = getUrlVars();
-      var data = {
-      "grant_type": "authorization_code",
-      "code": vars["code"],
-      "redirect_uri": "http://0.0.0.0:8000/myapp/list/",
-      "client_id": "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3",
-      "client_secret":
-      "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n"
-      };
-      token_url = "http://a250afd7c6eba11e98ea412ac368fc7a-312971903.us-east-1.elb.amazonaws.com/o/token/";
-      $.ajax({
+{% block script %}
+$(document).ready(function() {
+  $("#backtoCbtn").click(function(){
+    $.ajax({
       type: "POST",
-      url: token_url,
-      data: data,
-      success: function(data, status) {
-      console.log(data);
-      $.cookie("procleaner_token", data["access_token"], {expires: data["expires_in"]});
+      url: '/myapp/remove_token/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
       }
-      });
-      }
-      } else{
-      console.log("Its there!");
-      }*/
-      });
-      {% endblock %}
+    });
+  });
+});
+{% endblock %}

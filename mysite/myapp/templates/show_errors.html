@@ -174,15 +174,21 @@
 </div>
 {% endblock %}
 {% block script %}
-$("#backtoprofilerchoicebtn").click(function(){
-document.location.href = "{% url 'choices' %}";
-});
-$("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'upload' %}";
-});
-
-$("#backtoCbtn").click(function(){
-  document.location.href = "{{ c_drive_ui_url }}";
+$(document).ready(function() {
+  $("#backtoCbtn").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '/myapp/remove_token/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
+      }
+    });
   });
-
+  $("#backtoprofilerchoicebtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+    document.location.href = "{% url 'upload' %}";
+  });
+});
 {% endblock %}

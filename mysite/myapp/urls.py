@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from myapp.views import upload, show_doc, choices, download, downloads_page, sample, upload_cdrive
+from myapp.views import upload, show_doc, choices, download, downloads_page, sample, upload_cdrive, remove_token
 
 urlpatterns = [
     url(r'^list/$', upload, name='upload'),
@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^downloads/$', downloads_page, name='downloads_page'),
     url(r'^sample/$', sample, name='sample'),
     url(r'^upload_cdrive/$', upload_cdrive, name='upload_cdrive'),
+    url(r'^remove_token/$', remove_token, name='remove_token'),
 ]

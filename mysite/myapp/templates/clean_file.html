@@ -56,37 +56,41 @@
 {% endblock %}
 {% block script %}
 $(document).ready(function() {
-$('#download-btn').click(function(e) {
-e.preventDefault(); //stop the browser from following
-window.location.href = "{% static 'pdf/clean/'|add:clean_file_name %}";
-});
-$("#upload-button").click(function(e){
-e.preventDefault();
-$(".alert").show();
-$("#upload-message").html("Uploading...");
-$.ajax({
-type: "POST",
-url: '/myapp/upload_cdrive/',
-dataType: 'json',
-success: function(data) {
-$("#upload-message").html("Upload completed!");
-},
-error: function (jqXHR, textStatus, errorThrown) {
-$(".alert").removeClass("alert-success").addClass("alert-danger");
-$("#upload-message").html("Upload failed!");
-}
-});
-});
-});
-
-$("#backtoprofilerchoicebtn").click(function(){
-document.location.href = "{% url 'choices' %}";
-});
-$("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'upload' %}";
-});
-$("#backtoCbtn").click(function(){
-  document.location.href = "{{ c_drive_ui_url }}";
+  $('#download-btn').click(function(e) {
+    e.preventDefault(); //stop the browser from following
+    window.location.href = "{% static 'pdf/clean/'|add:clean_file_name %}";
   });
-
+  $("#upload-button").click(function(e){
+    e.preventDefault();
+    $(".alert").show();
+    $("#upload-message").html("Uploading...");
+    $.ajax({
+      type: "POST",
+      url: '/myapp/upload_cdrive/',
+      dataType: 'json',
+      success: function(data) {
+        $("#upload-message").html("Upload completed!");
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $(".alert").removeClass("alert-success").addClass("alert-danger");
+        $("#upload-message").html("Upload failed!");
+      }
+    });
+  });
+  $("#backtoprofilerchoicebtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+    document.location.href = "{% url 'upload' %}";
+  });
+  $("#backtoCbtn").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '/myapp/remove_token/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
+      }
+    });
+  });
+});
 {% endblock %}

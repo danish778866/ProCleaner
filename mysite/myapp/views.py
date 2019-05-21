@@ -155,6 +155,16 @@ def upload_cdrive(request):
         django_response = HttpResponseBadRequest
     return django_response
 
+@csrf_exempt
+def remove_token(request):
+    if CLIENT_TOKEN_KEY in request.session:
+        del request.session[CLIENT_TOKEN_KEY]
+        print("Deleted client!")
+    if "uploaded_file" in request.session:
+        del request.session["uploaded_file"]
+        print("Deleted file!")
+    return HttpResponse('')
+
 def download(request):
     uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":

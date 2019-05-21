@@ -273,17 +273,23 @@ var layout_words = {
   };
 Plotly.newPlot('hist-two', data_words, layout_words)
 
-
-$("#backtoprofilerchoicebtn").click(function(){
-  document.location.href = "{% url 'choices' %}";
+$(document).ready(function() {
+  $("#backtoCbtn").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '/myapp/remove_token/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
+      }
+    });
+  });
+  $("#backtoprofilerchoicebtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
   });
   $("#backtouploadbtn").click(function(){
-  document.location.href = "{% url 'upload' %}";
+    document.location.href = "{% url 'upload' %}";
   });
-
-  $("#backtoCbtn").click(function(){
-    document.location.href = "{{ c_drive_ui_url }}";
-    });
+});
 {% endblock %}
 
 
