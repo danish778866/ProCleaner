@@ -15,6 +15,7 @@ import pdb
 
 from myapp.models import Document
 from myapp.forms import DocumentForm, ProfilerChoiceForm
+from utils.utils import get_similar_strings, normalize_strings
 
 
 REDIRECT_URI = "http://0.0.0.0:8000/myapp/list/"
@@ -149,10 +150,10 @@ def upload_cdrive(request):
 def remove_token(request):
     if CLIENT_TOKEN_KEY in request.session:
         del request.session[CLIENT_TOKEN_KEY]
-        print("Deleted client!")
     if "uploaded_file" in request.session:
         del request.session["uploaded_file"]
-        print("Deleted file!")
+    if "file_type" in request.session:
+        del request.session["file_type"]
     return HttpResponse('')
 
 def download(request):
@@ -177,71 +178,35 @@ def download(request):
                  )
 
 def show_doc(request):
-    if request.session["file_type"] == "CDrive":
-        project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + "cdrive_files" + os.sep
-    else:
-        project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     uploaded_file = request.session.get('uploaded_file')
+    if request.session["file_type"] == "CDrive":
+        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
+    else:
+        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
     print(request.POST)
     if request.method == 'POST':
         if "merge" in request.POST:
             values = ','.join(request.POST.getlist('merge'))
-            table_path = project_dir + uploaded_file
-            A = pd.read_csv(table_path)
-            values_list = values.split("|")
-            for value in values_list:
-                current_values = value.split(",")
-                retain_value = current_values[0].strip()
-                for i in range(1, len(current_values)):
-                    current_value = current_values[i].strip()
-                    A['foo'].loc[A['foo'] == current_value] = retain_value
-            A.to_csv(table_path, index=False)
+            normalize_strings(uploaded_file_path, values)
             profiler_choice = "1"
         else:
             profiler_choice = request.POST['profiler_choice']
         if profiler_choice == "1":
-            table_A_path = project_dir + uploaded_file
-            table_B_path = project_dir + uploaded_file
-            A = pd.read_csv(table_A_path, names=['id', 'foo'])
-            B = pd.read_csv(table_B_path, names=['id', 'foo'])
-            qg3_tok = sm.QgramTokenizer(qval=3)
-            output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.6,
-                                        l_out_attrs=['foo'], r_out_attrs=['foo'])
-            similar_pairs = []
-            considered_pairs = []
-            similar_strings = []
+            similar_strings = get_similar_strings(uploaded_file_path)
             similar_strings_1 = []
             similar_strings_2 = []
             similar_strings_3 = []
-            for index, row in output_pairs.iterrows():
-                if row['_sim_score'] > 0.6 and row['_sim_score'] < 1.0:
-                    current_pair = {}
-                    current_pair['0'] = row['l_foo']
-                    current_pair['1'] = row['r_foo']
-                    pair_together = current_pair['1'] + current_pair['0']
-                    pair_to_add = current_pair['0'] + current_pair['1']
-                    if pair_together not in considered_pairs and current_pair['0'] != current_pair['1']:
-                        similar_pairs.append(current_pair)
-                        considered_pairs.append(pair_to_add)
-                        if row['l_foo'] not in similar_strings:
-                            similar_strings.append(row['l_foo'])
-                        if row['r_foo'] not in similar_strings:
-                            similar_strings.append(row['r_foo'])
-                        if len(similar_strings) >= 21:
-                            break
-            num_pairs = len(similar_pairs)
+            num_strings = len(similar_strings)
             show_normalizer = True
-            if num_pairs == 0:
+            if num_strings == 0:
                 show_normalizer = False
-            similar_strings.sort()
             num_each = len(similar_strings) / 3
             print(similar_strings)
             similar_strings_1 = similar_strings[0:num_each]
             similar_strings_2 = similar_strings[num_each:2 * num_each]
             similar_strings_3 = similar_strings[2 * num_each:]
             return render(request, 'show_doc.html', 
-                          {'file_path': uploaded_file, 'similar_pairs': similar_pairs, 
-                           'num_pairs': num_pairs,
+                          {'file_path': uploaded_file,
                            'similar_strings_1': similar_strings_1,
                            'similar_strings_2': similar_strings_2,
                            'similar_strings_3': similar_strings_3,
