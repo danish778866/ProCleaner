@@ -5,4 +5,5 @@ mysite/db.sqlite3
 mysite/media
 mysite/myapp/static/pdf/
 mysite/myapp/migrations
+mysite/cdrive_files
 venv

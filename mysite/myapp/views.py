@@ -214,7 +214,7 @@ def show_doc(request):
                           })
         else:
             column_name = 'foo'
-            table_A_path = project_dir + uploaded_file
+            table_A_path = uploaded_file_path
             A = pd.read_csv(table_A_path) #headers will be inferred automatically
             total_n_values = len(A)
 

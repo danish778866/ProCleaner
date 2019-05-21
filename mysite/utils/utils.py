@@ -3,8 +3,8 @@ import py_stringmatching as sm
 import pandas as pd
 
 def get_similar_strings(table_path):
-    A = pd.read_csv(table_path, names=['id', 'foo'])
-    B = pd.read_csv(table_path, names=['id', 'foo'])
+    A = pd.read_csv(table_path)
+    B = pd.read_csv(table_path)
     qg3_tok = sm.QgramTokenizer(qval=3)
     output_pairs = ssj.jaccard_join(A, B, 'id', 'id', 'foo', 'foo' , qg3_tok, 0.6,
                             l_out_attrs=['foo'], r_out_attrs=['foo'])
