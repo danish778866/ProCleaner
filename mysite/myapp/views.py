@@ -120,7 +120,7 @@ def sample(request):
 
 def choices(request):
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
-    return render(request, 'profiler_choice.html', {'profiler_options': profiler_options})
+    return render(request, 'choices.html', {'profiler_options': profiler_options})
 
 @csrf_exempt
 def upload_cdrive(request):
