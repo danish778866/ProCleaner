@@ -36,6 +36,16 @@ def get_similar_strings(table_path):
     return similar_strings
 
 def normalize_strings(table_path, values):
+    """
+    Normalize the strings to be merged.
+    Arguments:
+        table_path: The absolute path of list of strings.
+        values: The string of values to be normalized in the format
+                "GROUP1|GROUP2|...."
+                where
+                    GROUPi = RETAIN_VALUE,VALUE1,VALUE2...
+                    VALUE1,VALUE2 etc will get replaced by RETAIN_VALUE.
+    """
     A = pd.read_csv(table_path)
     values_list = values.split("|")
     for value in values_list:
