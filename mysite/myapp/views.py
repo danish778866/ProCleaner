@@ -169,7 +169,7 @@ def download(request):
     uploaded_df = pd.read_csv(uploaded_file_path)
     uploaded_df.to_csv(clean_file_path, index=False)
     return render(request,
-                  'clean_file.html',
+                  'download.html',
                       {
                           'clean_file_name': clean_file_name,
                           'clean_file_path': clean_file_path,
