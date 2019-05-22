@@ -13,8 +13,8 @@ to perform profiling and cleaning of a list of strings.
 > source myenv/bin/activate
 > pip install -r requirements.txt
 > cd mysite
+> python manage.py makemigrations myapp
 > python manage.py migrate
-> python manage.py migrate myapp
 > python manage.py runserver # Access via http://0.0.0.0:8000/myapp/list/
 ```
 
