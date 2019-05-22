@@ -32,7 +32,7 @@
       <div class="col-md-12">
         <div id="uploadLocal" class="collapse">
           <div class="well bs-component">
-            <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <form action="{% url 'sample' %}" onsubmit="return validateForm()" method="post" enctype="multipart/form-data" class="form-horizontal">
               {% csrf_token %}
               <fieldset>
                 <legend>Upload from Local </legend>
@@ -61,7 +61,7 @@
         </div>
         <div id="uploadCDrive" class="collapse">
           <div class="well bs-component">
-            <form action="{% url 'sample' %}" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <form action="{% url 'sample' %}" onsubmit="return validateForm()" method="post" enctype="multipart/form-data" class="form-horizontal">
               {% csrf_token %}
               <fieldset>
                 <legend>Select a file from C Drive</legend>
@@ -95,12 +95,7 @@
     </div>
 
       <div class="row">
-          <div class="col-md-12">
-            <br>
-            <div class="alert alert-dismissible alert-danger" style="display: none">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <strong>Error: Please select a valid choice</strong>
-            </div>
+          <div id="errorBox" class="col-md-12" style="display:none;">
           </div>
         </div>
         <div class="row">
@@ -118,6 +113,29 @@
   </div>
 {% endblock %}
 {% block script %}
+function validateForm() {
+    var localFile = $("#id_docfile")[0].files[0];
+    var cdriveFile = $("#select-cdrive-file").children("option:selected").val();
+    var isValid = true;
+    if(localFile === undefined && cdriveFile === '') {
+      isValid = false;
+      errorMessage = "Error: Please upload a file locally or select one from CDrive.";
+    } else if(cdriveFile === '' && localFile.size === 0) {
+      isValid = false;  
+      errorMessage = "Error: The uploaded file is empty.";
+    }
+    if(!isValid) {
+      errorBoxHtml = "<br> \
+            <div class=\"alert alert-dismissible alert-danger\"> \
+              <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> \
+              <strong id=\"errorMessage\"></strong> \
+            </div>";
+      $("#errorBox").html(errorBoxHtml);
+      $("#errorMessage").html(errorMessage);
+      $("#errorBox").show();
+    }
+    return isValid;
+}
 $(document).ready(function() {
   $("#backtoCbtn").click(function(){
     $.ajax({
