@@ -49,7 +49,7 @@
   </div> -->
   <div class="row">
     <div class="col-md-12">
-      <form id="formChoices" action="{% url 'show_doc' %}" onsubmit="return validateForm()" method="post" enctype="multipart/form-data">
+      <form id="formChoices" onsubmit="return validateForm()" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
           <div class="col-md-4 col-md-offset-4">
@@ -92,6 +92,12 @@ function validateForm() {
   if(choice === undefined) {
     $(".alert").show();
     return false;
+  } else {
+    var choice_num = parseInt(choice, 10) - 1;
+    var views = ["{% url 'clean_strings' %}", "{% url 'show_doc' %}", "{% url 'show_doc' %}"];
+    $("#formChoices").attr('action', views[choice_num]);
+    console.log(views[choice_num]);
+    return true;
   }
 } 
 $(document).ready(function(){

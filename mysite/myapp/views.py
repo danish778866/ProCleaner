@@ -177,42 +177,45 @@ def download(request):
                       }
                  )
 
+def clean_strings(request):
+    uploaded_file = request.session.get('uploaded_file')
+    if request.session["file_type"] == "CDrive":
+        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
+    else:
+        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
+    if request.method == 'POST':
+        if "merge" in request.POST:
+            values = ','.join(request.POST.getlist('merge'))
+            normalize_strings(uploaded_file_path, values)
+        similar_strings = get_similar_strings(uploaded_file_path)
+        similar_strings_1 = []
+        similar_strings_2 = []
+        similar_strings_3 = []
+        num_strings = len(similar_strings)
+        show_normalizer = True
+        if num_strings == 0:
+            show_normalizer = False
+        num_each = len(similar_strings) / 3
+        similar_strings_1 = similar_strings[0:num_each]
+        similar_strings_2 = similar_strings[num_each:2 * num_each]
+        similar_strings_3 = similar_strings[2 * num_each:]
+        return render(request, 'show_doc.html', 
+                      {'file_path': uploaded_file,
+                       'similar_strings_1': similar_strings_1,
+                       'similar_strings_2': similar_strings_2,
+                       'similar_strings_3': similar_strings_3,
+                       'show_normalizer': show_normalizer
+                      })
+
 def show_doc(request):
     uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":
         uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
     else:
         uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
-    print(request.POST)
     if request.method == 'POST':
-        if "merge" in request.POST:
-            values = ','.join(request.POST.getlist('merge'))
-            normalize_strings(uploaded_file_path, values)
-            profiler_choice = "1"
-        else:
-            profiler_choice = request.POST['profiler_choice']
-        if profiler_choice == "1":
-            similar_strings = get_similar_strings(uploaded_file_path)
-            similar_strings_1 = []
-            similar_strings_2 = []
-            similar_strings_3 = []
-            num_strings = len(similar_strings)
-            show_normalizer = True
-            if num_strings == 0:
-                show_normalizer = False
-            num_each = len(similar_strings) / 3
-            print(similar_strings)
-            similar_strings_1 = similar_strings[0:num_each]
-            similar_strings_2 = similar_strings[num_each:2 * num_each]
-            similar_strings_3 = similar_strings[2 * num_each:]
-            return render(request, 'show_doc.html', 
-                          {'file_path': uploaded_file,
-                           'similar_strings_1': similar_strings_1,
-                           'similar_strings_2': similar_strings_2,
-                           'similar_strings_3': similar_strings_3,
-                           'show_normalizer': show_normalizer
-                          })
-        else:
+        profiler_choice = request.POST['profiler_choice']
+        if profiler_choice != "1":
             column_name = 'foo'
             table_A_path = uploaded_file_path
             A = pd.read_csv(table_A_path) #headers will be inferred automatically
@@ -276,51 +279,6 @@ def show_doc(request):
                     'type_pervasiveness_dict': type_pervasiveness_dict,
                     'c_drive_ui_url': CDRIVE_UI_URL
                     })
-
-
-def downloads_page(request):
-    project_dir = os.path.dirname(os.path.realpath(__file__))
-    processed_dir = project_dir + os.sep + "static" + os.sep + "pdf"
-    all_documents = Document.objects.all()
-    docs_to_show = []
-    for document in all_documents:
-        doc_to_show = {}
-        file_url = document.docfile.url
-        file_name = os.path.basename(file_url)
-        doc_to_show['file'] = True
-        doc_to_show['file_name'] = file_name
-        doc_to_show['file_url'] = file_url
-        rules_file_path = processed_dir + os.sep + file_name + ".rules"
-        if os.path.exists(rules_file_path):
-            rules_file = True
-            rules_file_name = file_name + ".rules"
-            rules_file_url = rules_file_path
-        else:
-            rules_file = False
-            rules_file_name = ""
-            rules_file_url = ""
-        doc_to_show['rules_file'] = rules_file
-        doc_to_show['rules_file_name'] = rules_file_name
-        doc_to_show['rules_file_url'] = rules_file_url
-        clean_file_path = processed_dir + os.sep + file_name + ".clean"
-        print(clean_file_path)
-        if os.path.exists(clean_file_path):
-            print("Hah")
-            clean_file = True
-            clean_file_name = file_name + ".clean"
-            clean_file_url = clean_file_path
-        else:
-            print("Nah")
-            clean_file = False
-            clean_file_name = ""
-            clean_file_url = ""
-        doc_to_show['clean_file'] = clean_file
-        doc_to_show['clean_file_name'] = clean_file_name
-        doc_to_show['clean_file_url'] = clean_file_url
-        docs_to_show.append(doc_to_show)
-        print(docs_to_show)
-    return render(request, 'downloads.html', {'docs_to_show': docs_to_show})
-
 
 def stats_length_strings(df, col_name) :
     """
