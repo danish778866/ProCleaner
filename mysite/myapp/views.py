@@ -14,7 +14,6 @@ from myapp.models import Document
 from myapp.forms import DocumentForm
 from utils.utils import get_similar_strings, normalize_strings
 
-
 REDIRECT_URI = "http://0.0.0.0:8000/myapp/list/"
 APP_ID = "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3"
 APP_SECRET = os.getenv("APP_SECRET")
@@ -31,14 +30,17 @@ CLEAN_FILES_CDRIVE = os.path.join(os.path.join(os.path.join(os.path.join(PROJECT
 CLEAN_FILES_SUFFIX = ".clean"
 
 def upload(request):
-    """Return a HttpResponse object for rendering the /myapp/upload page
-    
+    """
+    View for rendering upload page of the application.
     This view performs the following operations:
         1. Create a form consisting of an input field for a user to upload a file.
         2. Get the OAuth token for the user from authentication (if it doesn't
            exist).
         3. Get the list of files in current users' CDrive.
         4. Render the form and CDrive files.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
     """
     form = DocumentForm()
     current_url = request.get_full_path()
@@ -79,6 +81,17 @@ def upload(request):
     )
 
 def sample(request):
+    """
+    View for rendering the sample tuples of the uploaded file.
+    This view does the following:
+        1. Read the upload type.
+        2. Save the uploaded file locally.
+        3. Set session parameters to reference the file subsequently.
+        4. Read and return a sample of tuples.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
+    """
     upload_type = ""
     if 'cdrive_file' in request.POST:
         upload_type = "CDrive"
@@ -118,16 +131,27 @@ def sample(request):
     return render(request, 'sample.html', {'sample_tuples': sample_tuples})
 
 def choices(request):
+    """
+    View for rendering the choices for profiling and cleaning.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
+    """
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
     return render(request, 'choices.html', {'profiler_options': profiler_options})
 
 @csrf_exempt
 def upload_cdrive(request):
+    """
+    View for uploading the clean file to CDrive.
+    This view does the following:
+        1. Retrives the path of clean file on local.
+        2. Uploads the file to CDrive using it's API.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
+    """
     uploaded_file = request.session.get('uploaded_file')
-    if request.session["file_type"] == "CDrive":
-        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
-    else:
-        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file)
     clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
     clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
     files = {'file': open(clean_file_path, 'rb')}
@@ -147,6 +171,16 @@ def upload_cdrive(request):
 
 @csrf_exempt
 def exit_app(request):
+    """
+    View for performing a clean exit when the user wants to go back to CDrive.
+    This view does the following:
+        1. Delete any session data stored (Token, etc).
+        2. Delete uploaded and cleaned files, if they exist. 
+        3. Delete model object, if it exists.
+    Arguments:
+        request: The request object.
+    Returns an empty HttpResponse object.
+    """
     uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":
         uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
@@ -166,9 +200,17 @@ def exit_app(request):
         del request.session["uploaded_file"]
     if "file_type" in request.session:
         del request.session["file_type"]
+    if "uploaded_file_name" in request.session:
+        del request.session["uploaded_file_name"]
     return HttpResponse('')
 
 def download(request):
+    """
+    View for rendering the download page of the application.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
+    """
     uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":
         uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
@@ -190,6 +232,17 @@ def download(request):
                  )
 
 def clean_strings(request):
+    """
+    View for performing value normalization part of the application.
+    This view does the following:
+        1. Retrives the file name from the session.
+        2. Retrives values to be merged from the request (if they exist) and uses 
+           them to normalize strings.
+        3. Retrives similar strings to display in the next iteration.
+    Arguments:
+        request: The request object.
+    Returns an HttpResponse object.
+    """
     uploaded_file = request.session.get('uploaded_file')
     if request.session["file_type"] == "CDrive":
         uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
