@@ -6,15 +6,12 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
-import py_stringsimjoin as ssj
-import py_stringmatching as sm
 import pandas as pd
 import os, sys, json
 import requests
 import pdb
-
 from myapp.models import Document
-from myapp.forms import DocumentForm, ProfilerChoiceForm
+from myapp.forms import DocumentForm
 from utils.utils import get_similar_strings, normalize_strings
 
 
