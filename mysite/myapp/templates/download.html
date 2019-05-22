@@ -83,7 +83,7 @@ $(document).ready(function() {
   $("#backtoCbtn").click(function(){
     $.ajax({
       type: "POST",
-      url: '/myapp/remove_token/',
+      url: '/myapp/exit_app/',
       success: function(data) {
         document.location.href = "{{ c_drive_ui_url }}";
       }

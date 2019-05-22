@@ -95,6 +95,8 @@ def sample(request):
         uploaded_df.columns = ['foo']
         uploaded_df['id'] = range(0, len(uploaded_df))
         column_order = ['id', 'foo']
+        if not os.path.exists(CDRIVE_FILES_DIR):
+            os.makedirs(CDRIVE_FILES_DIR)
         uploaded_df[column_order].to_csv(os.path.join(CDRIVE_FILES_DIR, cdrive_file), index=False)
         sample_tuples = tuples[1:10]
         request.session['uploaded_file'] = cdrive_file
@@ -110,6 +112,7 @@ def sample(request):
         uploaded_df['foo'] = uploaded_df['foo'].apply(whitespace_striper)
         uploaded_df[column_order].to_csv(uploaded_doc_path, index=False)
         request.session['uploaded_file'] = uploaded_doc.docfile.url
+        request.session['uploaded_file_name'] = uploaded_doc.docfile.name
         request.session['file_type'] = "Local"
         sample_tuples = uploaded_df['foo'].head(10).tolist()
     return render(request, 'sample.html', {'sample_tuples': sample_tuples})
@@ -143,7 +146,20 @@ def upload_cdrive(request):
     return django_response
 
 @csrf_exempt
-def remove_token(request):
+def exit_app(request):
+    uploaded_file = request.session.get('uploaded_file')
+    if request.session["file_type"] == "CDrive":
+        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
+    else:
+        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
+        uploaded_file_name = request.session.get('uploaded_file_name')
+        Document.objects.filter(docfile=uploaded_file_name).delete()
+    if os.path.exists(uploaded_file_path):
+        os.remove(uploaded_file_path)
+    clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
+    clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
+    if os.path.exists(clean_file_path):
+        os.remove(clean_file_path)
     if CLIENT_TOKEN_KEY in request.session:
         del request.session[CLIENT_TOKEN_KEY]
     if "uploaded_file" in request.session:
