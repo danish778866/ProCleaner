@@ -116,7 +116,7 @@ def sample(request):
         request.session['uploaded_file'] = uploaded_doc.docfile.url
         request.session['file_type'] = "Local"
         sample_tuples = uploaded_df['foo'].head(10).tolist()
-    return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
+    return render(request, 'sample.html', {'sample_tuples': sample_tuples})
 
 def choices(request):
     profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]

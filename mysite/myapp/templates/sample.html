@@ -17,9 +17,9 @@
       <table class="table table-striped table-hover ">
         <tbody>
           {% for t in sample_tuples %}
-          <tr class="info">
-            <td>{{ t }}</td>
-          </tr>
+            <tr class="info">
+              <td>{{ t }}</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -27,22 +27,24 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-        <button type="button" value="Confirm" id="confirmbtn" class="btn btn-primary">Confirm</button>
-        <button type="button" value="backUpload" id="backtouploadbtn" class="btn btn-default">Back to Upload Page</button>
+      <button type="button" value="Confirm" id="confirmbtn" class="btn btn-primary">Confirm</button>
+      <button type="button" value="backUpload" id="backtouploadbtn" class="btn btn-default">Back to Upload Page</button>
     </div>
   </div>
   <div class="row">
-      <div class="col-md-12">
-        <br>
-      </div>
+    <div class="col-md-12">
+      <br>
     </div>
+  </div>
 </div>
 {% endblock %}
 {% block script %}
-$("#confirmbtn").click(function(){
-document.location.href = "{% url 'choices' %}";
-});
-$("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'upload' %}";
+$(document).ready(function() {
+  $("#confirmbtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+    document.location.href = "{% url 'upload' %}";
+  });
 });
 {% endblock %}
