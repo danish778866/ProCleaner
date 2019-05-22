@@ -78,7 +78,7 @@ def upload(request):
     all_documents = Document.objects.all()
     return render(
         request,
-        'list.html',
+        'upload.html',
         {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files, 'c_drive_ui_url': CDRIVE_UI_URL}
     )
 
