@@ -9,10 +9,13 @@ to perform profiling and cleaning of a list of strings.
 > git clone https://github.com/danish778866/ProCleaner.git
 > cd ProCleaner
 > virtualenv myenv
+> # Add APP_SECRET to myenv/bin/activate in order to interact with CDrive.
 > source myenv/bin/activate
 > pip install -r requirements.txt
 > cd mysite
 > python manage.py migrate
+> python manage.py migrate myapp
+> python manage.py runserver # Access via http://0.0.0.0:8000/myapp/list/
 ```
 
 ## Organization
