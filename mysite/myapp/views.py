@@ -72,11 +72,10 @@ def upload(request):
         if list_response.status_code == requests.codes.ok:
             for r in list_response.json():
                 cdrive_files.append(r['file_name'])
-    all_documents = Document.objects.all()
     return render(
         request,
         'upload.html',
-        {'form': form, 'all_documents': all_documents, 'cdrive_files': cdrive_files, 'c_drive_ui_url': CDRIVE_UI_URL}
+        {'form': form, 'cdrive_files': cdrive_files, 'c_drive_ui_url': CDRIVE_UI_URL}
     )
 
 def sample(request):
