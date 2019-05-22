@@ -199,7 +199,7 @@ def clean_strings(request):
         similar_strings_1 = similar_strings[0:num_each]
         similar_strings_2 = similar_strings[num_each:2 * num_each]
         similar_strings_3 = similar_strings[2 * num_each:]
-        return render(request, 'show_doc.html', 
+        return render(request, 'clean_strings.html', 
                       {'file_path': uploaded_file,
                        'similar_strings_1': similar_strings_1,
                        'similar_strings_2': similar_strings_2,
