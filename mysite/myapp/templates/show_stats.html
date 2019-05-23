@@ -51,15 +51,15 @@
                   </thead> -->
                   <tbody>
                     <tr>
-                      <td>Missing Values Detected</td>
+                      <td>Missing Strings Detected</td>
                       <td>{{type_missing_values_caught}}</td>
                     </tr>
                     <tr>
-                      <td>Number of Missing Values</td>
+                      <td>Number of Missing Strings</td>
                       <td>{{n_missing}}</td>
                     </tr>
                     <tr>
-                      <td>% of Missing Values (out of Total Values)</td>
+                      <td>% of Missing Strings (out of Total Strings)</td>
                       <td>{{pervasiveness_missing}}</td>
                     </tr>
                   </tbody>
@@ -315,6 +315,23 @@ function printDiv(eleId){
   PW.close();
 }
 
+$(document).ready(function() {
+  $("#backtoCbtn").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '/myapp/exit_app/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
+      }
+    });
+  });
+  $("#backtoprofilerchoicebtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+    document.location.href = "{% url 'upload' %}";
+  });
+});
 {% endblock %}
 
 

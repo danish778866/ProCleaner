@@ -43,18 +43,15 @@
 
                   <tbody>
                     <tr>
-                      <td>1</td>
-                      <td>Missing Values Detected</td>
+                      <td>Missing Strings Detected</td>
                       <td>{{type_missing_values_caught}}</td>
                     </tr>
                     <tr>
-                      <td>2</td>
-                      <td>Number of Missing Values</td>
+                      <td>Number of Missing Strings</td>
                       <td>{{n_missing}}</td>
                     </tr>
                     <tr>
-                      <td>3</td>
-                      <td>% of Missing Values (out of Total Values)</td>
+                      <td>% of Missing Strings (out of Total Strings)</td>
                       <td>{{pervasiveness_missing}}</td>
                     </tr>
                   </tbody>
@@ -79,17 +76,14 @@
 
                   <tbody>
                     <tr class="info">
-                      <td>1</td>
                       <td>Some Duplicates Detected</td>
                       <td>{{duplicates}}</td>
                     </tr>
                     <tr class="info">
-                      <td>2</td>
                       <td>Number of Unique Strings</td>
                       <td>{{n_uniques}}</td>
                     </tr>
                     <tr class="info">
-                      <td>3</td>
                       <td>Pervasiveness of Uniques</td>
                       <td>{{pervasiveness_uniques}}</td>
                     </tr>
@@ -128,31 +122,26 @@
                     {% for key, value in type_pervasiveness_dict.items %}
                     {% if forloop.counter > 12 %}
                     <tr class="info">
-                      <td>{{forloop.counter}}</td>
                       <td>{{key}}</td>
                       <td>{{value}}</td>
                     </tr>
                     {% elif forloop.counter > 9 %}
                     <tr class="success">
-                      <td>{{forloop.counter}}</td>
                       <td>{{key}}</td>
                       <td>{{value}}</td>
                     </tr>
                     {% elif forloop.counter > 6 %}
                     <tr class="info">
-                      <td>{{forloop.counter}}</td>
                       <td>{{key}}</td>
                       <td>{{value}}</td>
                     </tr>
                     {% elif forloop.counter > 3 %}
                     <tr class="success">
-                      <td>{{forloop.counter}}</td>
                       <td>{{key}}</td>
                       <td>{{value}}</td>
                     </tr>
                     {% else %}
                     <tr class="info">
-                      <td>{{forloop.counter}}</td>
                       <td>{{key}}</td>
                       <td>{{value}}</td>
                     </tr>
@@ -200,15 +189,21 @@
 </div>
 {% endblock %}
 {% block script %}
-$("#backtoprofilerchoicebtn").click(function(){
-document.location.href = "{% url 'choices' %}";
+$(document).ready(function() {
+  $("#backtoCbtn").click(function(){
+    $.ajax({
+      type: "POST",
+      url: '/myapp/exit_app/',
+      success: function(data) {
+        document.location.href = "{{ c_drive_ui_url }}";
+      }
+    });
+  });
+  $("#backtoprofilerchoicebtn").click(function(){
+    document.location.href = "{% url 'choices' %}";
+  });
+  $("#backtouploadbtn").click(function(){
+    document.location.href = "{% url 'upload' %}";
+  });
 });
-$("#backtouploadbtn").click(function(){
-document.location.href = "{% url 'upload' %}";
-});
-
-$("#backtoCbtn").click(function(){
-document.location.href = "{{ c_drive_ui_url }}";
-});
-
 {% endblock %}
