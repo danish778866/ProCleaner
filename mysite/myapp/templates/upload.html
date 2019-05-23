@@ -29,13 +29,12 @@
     <div class="col-md-12">
       <div id="uploadLocal" class="collapse">
         <div class="well bs-component">
-          <form action="{% url 'sample' %}" onsubmit="return validateForm()" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <form action="{% url 'sample' %}" onsubmit="return validateFormLocal()" method="post" enctype="multipart/form-data" class="form-horizontal">
             {% csrf_token %}
             <fieldset>
               <legend>Upload from Local </legend>
               <div class="form-group">
                 <div class="col-lg-12">
-                  {% csrf_token %}
                     <p>{{ form.non_field_errors }}</p>
                     <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
                     <p>
@@ -55,13 +54,12 @@
       </div>
       <div id="uploadCDrive" class="collapse">
         <div class="well bs-component">
-          <form action="{% url 'sample' %}" onsubmit="return validateForm()" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <form action="{% url 'sample' %}" onsubmit="return validateFormCDrive()" method="post" enctype="multipart/form-data" class="form-horizontal">
             {% csrf_token %}
             <fieldset>
               <legend>Select a file from C Drive</legend>
               <div class="form-group">
                 <div class="col-lg-12">
-                  {% csrf_token %}
                   <select id="select-cdrive-file" name="cdrive_file" class="form-control">
                     <option></option>
                     {% for cdrive_file in cdrive_files %}
@@ -98,16 +96,54 @@
 </div>
 {% endblock %}
 {% block script %}
-function validateForm() {
+function validateFormCDrive() {
   var localFile = $("#id_docfile")[0].files[0];
   var cdriveFile = $("#select-cdrive-file").children("option:selected").val();
   var isValid = true;
-  if(localFile === undefined && cdriveFile === '') {
+  if(localFile != undefined) {
     isValid = false;
-    errorMessage = "Error: Please upload a file locally or select one from CDrive.";
-  } else if(cdriveFile === '' && localFile.size === 0) {
-    isValid = false;  
-    errorMessage = "Error: The uploaded file is empty.";
+    if(cdriveFile === '') {
+      errorMessage = "Error: Please select a file from CDrive or click on the Submit button for uploading local file.";
+    } else {
+      errorMessage = "Error: Please select only one option to upload the file (Local or CDrive).";
+    }
+  } else {
+    if(cdriveFile === '') {
+      isValid = false;  
+      errorMessage = "Error: Please select a file from CDrive.";
+    }
+  }
+  if(!isValid) {
+    errorBoxHtml = "<br> \
+          <div class=\"alert alert-dismissible alert-danger\"> \
+            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> \
+            <strong id=\"errorMessage\"></strong> \
+          </div>";
+    $("#errorBox").html(errorBoxHtml);
+    $("#errorMessage").html(errorMessage);
+    $("#errorBox").show();
+  }
+  return isValid;
+}
+function validateFormLocal() {
+  var localFile = $("#id_docfile")[0].files[0];
+  var cdriveFile = $("#select-cdrive-file").children("option:selected").val();
+  var isValid = true;
+  if(cdriveFile != '') {
+    isValid = false;
+    if(localFile === undefined) {
+      errorMessage = "Error: Please select a file locally or click on the Submit button for uploading file from CDrive.";
+    } else {
+      errorMessage = "Error: Please select only one option to upload the file (Local or CDrive).";
+    }
+  } else {
+    if(localFile === undefined) {
+      isValid = false;  
+      errorMessage = "Error: Please select a file from Local.";
+    } else if(localFile.size === 0) {
+      isValid = false;  
+      errorMessage = "Error: The uploaded file is empty.";
+    }
   }
   if(!isValid) {
     errorBoxHtml = "<br> \

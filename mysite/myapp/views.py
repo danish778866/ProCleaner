@@ -181,23 +181,24 @@ def exit_app(request):
         request: The request object.
     Returns an empty HttpResponse object.
     """
-    uploaded_file = request.session.get('uploaded_file')
-    if request.session["file_type"] == "CDrive":
-        uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
-    else:
-        uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
-        uploaded_file_name = request.session.get('uploaded_file_name')
-        Document.objects.filter(docfile=uploaded_file_name).delete()
-    if os.path.exists(uploaded_file_path):
-        os.remove(uploaded_file_path)
-    clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
-    clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
-    if os.path.exists(clean_file_path):
-        os.remove(clean_file_path)
+    if "uploaded_file" in request.session:
+        uploaded_file = request.session.get('uploaded_file')
+        del request.session["uploaded_file"]   
+    if "file_type" in request.session:
+        if request.session["file_type"] == "CDrive":
+            uploaded_file_path = os.path.join(CDRIVE_FILES_DIR, uploaded_file)
+        else:
+            uploaded_file_path = os.path.join(PROJECT_DIR, uploaded_file[1:])
+            uploaded_file_name = request.session.get('uploaded_file_name')
+            Document.objects.filter(docfile=uploaded_file_name).delete()
+        if os.path.exists(uploaded_file_path):
+            os.remove(uploaded_file_path)
+        clean_file_name = os.path.basename(uploaded_file) + CLEAN_FILES_SUFFIX
+        clean_file_path = os.path.join(CLEAN_FILES, clean_file_name)
+        if os.path.exists(clean_file_path):
+            os.remove(clean_file_path)
     if CLIENT_TOKEN_KEY in request.session:
         del request.session[CLIENT_TOKEN_KEY]
-    if "uploaded_file" in request.session:
-        del request.session["uploaded_file"]
     if "file_type" in request.session:
         del request.session["file_type"]
     if "uploaded_file_name" in request.session:
