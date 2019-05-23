@@ -6,9 +6,7 @@
     <div class="row">
       <div class="col-md-12">
         <h1>
-          Debug/Detect Issues
-          <i class="helpicon fa fa-question-circle" style="font-size: 24px;" data-toggle="modal"
-            data-target="#myModal"></i>
+          Debug Strings
         </h1>
         <p class="lead">
           Interesting patterns that might help you detect errors in your data
@@ -65,6 +63,7 @@
             </div>
           </div>
           <div class="tab-pane fade" id="duplicates">
+            {% if n_non_missing > 0 %}
             <div class="row">
               <div class="col-md-12">
 
@@ -98,8 +97,20 @@
                 </table>
               </div>
             </div>
+            {% else %}
+            <div class="row">
+              <div class="col-md-12">
+                <br>
+                <b>{{ message }}</b>
+              </div>
+            </div>
+            {% endif %}
+            <div class="row">
+
+            </div>
           </div>
           <div class="tab-pane fade" id="types">
+              {% if n_non_missing > 0 %}
             <div class="row">
               <div class="col-md-12">
 
@@ -152,6 +163,17 @@
                 </table>
               </div>
             </div>
+            {% else %}
+            <div class="row">
+              <div class="col-md-12">
+                <br>
+                <b>{{ message }}</b>
+              </div>
+            </div>
+            {% endif %}
+            <div class="row">
+
+            </div>
           </div>
         </div>
       </div>
@@ -167,6 +189,10 @@
   </div>
   <div class="row">
     <div class="col-md-12">
+        <br>
+        <form> 
+            <input type="button" class="btn btn-default" value="Print this page" onclick="window.print()" /> 
+         </form> 
       <br>
     </div>
   </div>
@@ -182,7 +208,7 @@ document.location.href = "{% url 'upload' %}";
 });
 
 $("#backtoCbtn").click(function(){
-  document.location.href = "{{ c_drive_ui_url }}";
-  });
+document.location.href = "{{ c_drive_ui_url }}";
+});
 
 {% endblock %}

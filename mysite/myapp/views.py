@@ -20,10 +20,10 @@ from myapp.forms import DocumentForm, ProfilerChoiceForm
 REDIRECT_URI = "http://0.0.0.0:8000/myapp/list/"
 APP_ID = "JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3"
 APP_SECRET = "XErdw5E9Nzok8eqI4jnkKrmtYpoPwQd5m9273HPwQ0wPQa63L5UnjFZ9CMSIwrhPTxO5TzxNVB8w2wO5LBrV88NvzNfnj3UviY3T4yojV5yhl4wzR1J96l0JLEexdS3n"
-TOKEN_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/token/"
-AUTH_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz"
-CDRIVE_URL = "http://acdb13cd77acb11e98ea412ac368fc7a-549133274.us-east-1.elb.amazonaws.com"
-CDRIVE_UI_URL = "http://a4e6f607c7acd11e98ea412ac368fc7a-425625761.us-east-1.elb.amazonaws.com"
+TOKEN_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/authentication/o/token/"
+AUTH_URL = "http://ad09282b27aca11e98ea412ac368fc7a-1539065101.us-east-1.elb.amazonaws.com/authentication/o/authorize/?response_type=code&client_id=JjLei3oxaRx6qtb6w1EoysY7MemGC1vCctoe24N3&redirect_uri=http://0.0.0.0:8000/myapp/list/&state=1234xyz"
+CDRIVE_URL = "http://acdb13cd77acb11e98ea412ac368fc7a-549133274.us-east-1.elb.amazonaws.com/api/v1/cdrive"
+CDRIVE_UI_URL = "https://a9f7202c77b7e11e98ea412ac368fc7a-1830034118.us-east-1.elb.amazonaws.com/cdrive/home"
 CLIENT_TOKEN_KEY = "procleaner_token"
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 CDRIVE_FILES_DIR = os.path.join(PROJECT_DIR, "cdrive_files")
@@ -128,7 +128,7 @@ def sample(request):
     return render(request, 'list_tuples.html', {'sample_tuples': sample_tuples})
 
 def choices(request):
-    profiler_options = [["1", "Clean Strings"], ["2", "Profile"], ["3", "Find Errors"]]
+    profiler_options = [["1", "Clean Strings"], ["2", "Profile Strings"], ["3", "Debug Strings"]]
     return render(request, 'profiler_choice.html', {'profiler_options': profiler_options})
 
 @csrf_exempt
@@ -256,18 +256,26 @@ def show_doc(request):
             A_without_missing_values = A[~A[col_missing]]
             
             total_non_missing_values = len(A_without_missing_values)
-            # redirect to show_missing_messages page, if no non-missing values in file.
-            if total_non_missing_values == 0:
-                message = "The file doesn't contain any non-missing values. No additional errors will be found."
-                return render(request, 'show_missing_messages.html', {
-                'message': message,
-                'n_values': total_non_missing_values,
-                'n_missing': n_missing,
-                'pervasiveness_missing': pervasiveness_missing,
-                'type_missing_values_caught': type_missing_values_caught
-                })
+            
 
             if profiler_choice == "2":
+
+                # redirect to show_stats page with modified arguments than the normal case, if no non-missing values in file.
+                if total_non_missing_values == 0:
+                    message = "No non-missing strings to find statistics on."
+                    return render(request, 'show_stats.html', {
+                        'total_values': total_n_values,
+                    'n_non_missing': total_non_missing_values,
+                    'message': message,
+                    'n_values': total_non_missing_values,
+                    'n_missing': n_missing,
+                    'pervasiveness_missing': pervasiveness_missing,
+                    'type_missing_values_caught': type_missing_values_caught,
+                    'lengths': 0,
+                    'lengths_words': 0,
+                    'c_drive_ui_url': CDRIVE_UI_URL
+                    })
+
                 # calculate stats for strings lengths
                 stats, lengths = stats_length_strings(A_without_missing_values, column_name)
                 # calculate stats for no. of words in strings
@@ -276,6 +284,7 @@ def show_doc(request):
                 # json_data = json.dumps({"lengths": lengths})
                 return render(request, 'show_stats.html', 
                     {'total_values': total_n_values,
+                    'n_non_missing': total_non_missing_values,
                     'n_values': total_non_missing_values,
                     'n_missing': n_missing,
                     'pervasiveness_missing': pervasiveness_missing,
@@ -288,6 +297,20 @@ def show_doc(request):
                     'c_drive_ui_url': CDRIVE_UI_URL
                     })
             else:
+
+                # redirect to show_errors page with modified arguments than the normal case, if no non-missing values in file.
+                if total_non_missing_values == 0:
+                    message = "No non-missing strings to find errors on."
+                    return render(request, 'show_errors.html', {
+                        'total_values': total_n_values,
+                    'n_non_missing': total_non_missing_values,
+                    'message': message,
+                    'n_values': total_non_missing_values,
+                    'n_missing': n_missing,
+                    'pervasiveness_missing': pervasiveness_missing,
+                    'type_missing_values_caught': type_missing_values_caught,
+                    'c_drive_ui_url': CDRIVE_UI_URL
+                    })
                 # find uniqueness
                 n_uniques, pervasiveness_uniques, duplicates = fraction_uniques(A_without_missing_values, column_name)
 
@@ -297,6 +320,7 @@ def show_doc(request):
                 # return the different errors to the corresponding html
                 return render(request, 'show_errors.html', {
                     'total_values': total_n_values,
+                    'n_non_missing': total_non_missing_values,
                     'n_values': total_non_missing_values,
                     'n_uniques': n_uniques,
                     'pervasiveness_uniques': pervasiveness_uniques, 
