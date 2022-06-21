@@ -4,7 +4,7 @@ Cython==0.29.6
 Django==1.11.20
 idna==2.8
 joblib==0.13.2
-numpy==1.16.2
+numpy==1.22.0
 pandas==0.24.1
 py-stringmatching==0.4.1
 py-stringsimjoin==0.3.0
